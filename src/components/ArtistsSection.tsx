@@ -18,7 +18,7 @@ const InstagramIcon = ({ size = 24 }: { size?: number }) => (
   </svg>
 );
 
-const artists = [
+const defaultArtists = [
   { name: "Dr. Agala Ferreira" },
   { name: "Amir Taaki" },
   { name: "Andrea Franz" },
@@ -28,7 +28,8 @@ const artists = [
   { name: "Vitalik Buterin" },
 ];
 
-export default function ArtistsSection() {
+export default function ArtistsSection({ artists = [] }: { artists?: any[] }) {
+  const displayArtists = artists.length > 0 ? artists : defaultArtists;
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const scroll = (direction: "left" | "right") => {
@@ -87,7 +88,7 @@ export default function ArtistsSection() {
           }}
         />
 
-        {artists.map((artist, idx) => {
+        {displayArtists.map((artist, idx) => {
           // Pseudo-random slight rotations
           const rotations = [
             "group-hover:-rotate-2", 
@@ -112,7 +113,9 @@ export default function ArtistsSection() {
                     {artist.name}
                   </span>
                 <a
-                  href="#"
+                  href={artist.instagram ? `https://instagram.com/${artist.instagram}` : "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-white hover:text-purple-400 transition-colors"
                 >
                   <InstagramIcon size={14} />
@@ -122,7 +125,7 @@ export default function ArtistsSection() {
               {/* Image container - Absolute inset to prevent bleeding/layout shifts */}
               <div className="relative w-full aspect-[3/4] overflow-hidden">
                 <img
-                  src="/video/video.avif"
+                  src={artist.image || "/video/video.avif"}
                   alt={artist.name}
                   className="absolute inset-0 w-full h-full object-cover"
                 />

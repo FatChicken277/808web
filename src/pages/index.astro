@@ -7,13 +7,17 @@ import ArtistsSection from '../components/ArtistsSection';
 import VideoSection from '../components/VideoSection';
 import MapSection from '../components/MapSection';
 import Footer from '../components/Footer';
+import { getCollection } from 'astro:content';
+
+const artistsEntries = await getCollection('artists');
+const artistsData = artistsEntries.map((entry: any) => entry.data);
 ---
 
 <Layout>
   <Hero client:load />
   <div id="delayed-content" class="hidden">
     <Marquee />
-    <ArtistsSection client:load />
+    <ArtistsSection client:load artists={artistsData} />
     <VideoSection client:load />
     <GridSection />
     <MapSection />

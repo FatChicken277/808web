@@ -10,15 +10,21 @@ content:
       - name: siteName
         label: Site Name
         type: string
-  - name: posts
-    label: Posts
+  - name: artists
+    label: Artists
     type: collection
-    folder: src/content/posts
+    folder: src/content/artists
     fields:
-      - name: title
-        label: Title
+      - name: name
+        label: Name
         type: string
         required: true
+      - name: instagram
+        label: Instagram
+        type: string
+      - name: image
+        label: Image
+        type: image
       - name: body
-        label: Body
+        label: Bio
         type: rich-text
