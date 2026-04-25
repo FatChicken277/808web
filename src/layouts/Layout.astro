@@ -20,16 +20,68 @@ import "../styles/global.css";
 
     <!-- Animated Film Grain -->
     <div class="film-grain"></div>
+
+    <!-- Custom Cursor -->
+    <div id="custom-cursor"></div>
+
+    <script>
+      const cursor = document.getElementById('custom-cursor');
+      
+      if (cursor) {
+        document.addEventListener('mousemove', (e) => {
+          cursor.style.left = e.clientX + 'px';
+          cursor.style.top = e.clientY + 'px';
+        });
+
+        const attachHoverEvents = () => {
+          const clickables = document.querySelectorAll('a, button, [role="button"], input, select');
+          clickables.forEach((el) => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
+          });
+        };
+        
+        attachHoverEvents();
+        // Fallback for dynamically loaded components
+        setInterval(attachHoverEvents, 2000);
+      }
+    </script>
   </body>
 </html>
 
 <style>
+  * {
+    cursor: none !important;
+  }
+
   html,
   body {
     margin: 0;
     width: 100%;
     height: 100%;
     background-color: #000;
+  }
+
+  #custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    border: 2px solid white;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 100000;
+    transform: translate(-50%, -50%);
+    transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
+    mix-blend-mode: difference;
+  }
+
+  #custom-cursor.cursor-hover {
+    width: 40px;
+    height: 40px;
+    background-color: white;
+    opacity: 0.8;
   }
 
   .halation-wrapper {

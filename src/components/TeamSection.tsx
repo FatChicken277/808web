@@ -25,7 +25,7 @@ export default function TeamSection({ team = [] }: { team?: any[] }) {
   };
 
   return (
-    <section className="w-full bg-black text-white py-12 overflow-hidden border-t border-white/10">
+    <section className="w-full bg-gradient-to-b from-[#1a0b2e] to-black text-white py-12 overflow-hidden border-t border-white/10">
       {/* Header */}
       <div className="flex items-center justify-between mb-8 px-6 md:px-12">
         <div className="flex items-baseline gap-4">
@@ -39,13 +39,13 @@ export default function TeamSection({ team = [] }: { team?: any[] }) {
         <div className="flex gap-4">
           <button
             onClick={() => scroll("left")}
-            className="hover:opacity-60 transition-all p-2 border border-white/20 rounded-full active:scale-90"
+            className="hover:bg-white/10 transition-all p-2 border border-white/20 rounded-full active:scale-90"
           >
             <ArrowLeft size={20} />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="hover:opacity-60 transition-all p-2 border border-white/20 rounded-full active:scale-90"
+            className="hover:bg-white/10 transition-all p-2 border border-white/20 rounded-full active:scale-90"
           >
             <ArrowRight size={20} />
           </button>
@@ -86,14 +86,14 @@ export default function TeamSection({ team = [] }: { team?: any[] }) {
               className="group relative flex-shrink-0 w-[65vw] sm:w-[40vw] md:w-[22vw] snap-start"
             >
               {/* Inner Wrapper */}
-              <div className={`w-full flex flex-col bg-white/5 border border-white/10 overflow-hidden transition-all duration-500 ${randomRotation} group-hover:scale-[1.05] group-hover:z-50 group-hover:border-white/40 group-hover:shadow-[0_30px_60px_rgba(0,0,0,0.8)]`}>
+              <div className={`w-full flex flex-col bg-black/20 border border-white/10 overflow-hidden backdrop-blur-sm transition-all duration-500 ${randomRotation} group-hover:scale-[1.05] group-hover:z-50 group-hover:border-white/40 group-hover:shadow-[0_30px_60px_rgba(0,0,0,0.5)]`}>
                 {/* Team Header */}
-                <div className="p-3 flex flex-col justify-center bg-black border-b border-white/10 shrink-0">
+                <div className="p-3 flex flex-col justify-center bg-black/40 border-b border-white/10 shrink-0 text-white">
                   <span className="text-[11px] font-bold uppercase tracking-tight truncate">
                     {member.name}
                   </span>
                   {member.role && (
-                    <span className="text-[9px] font-mono uppercase text-white/50 truncate mt-1">
+                    <span className="text-[9px] font-mono uppercase text-white/60 truncate mt-1">
                       {member.role}
                     </span>
                   )}
