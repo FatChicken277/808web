@@ -95,7 +95,11 @@ export default function Hero() {
         <header className="flex w-full items-start justify-between mix-blend-difference text-white">
           {/* Left: Logos */}
           <div className="flex items-center gap-4">
-            <img src="/logos/logos.png" alt="808 Logos" className="h-5 md:h-8 w-auto object-contain" />
+            <img
+              src="/logos/logos.png"
+              alt="808 Logos"
+              className="h-5 md:h-8 w-auto object-contain"
+            />
           </div>
 
           {/* Right: Navbar & Contact */}
@@ -157,27 +161,27 @@ export default function Hero() {
             </div>
 
             {/* Action Box */}
-            <div className="w-full bg-white text-black text-xs font-bold uppercase tracking-widest">
-              <div className="flex border-b border-black">
+            <div className="w-full bg-white text-black text-xs font-bold uppercase tracking-widest mt-5 flex flex-col">
+              <a
+                href="#tickets"
+                className="block w-full text-center py-3 border-b border-black hover:bg-[#39FF14] transition-colors"
+              >
+                OBTENER TICKETS
+              </a>
+              <div className="flex w-full">
                 <a
-                  href="#shop"
+                  href="#artistas"
                   className="flex-1 text-center py-3 border-r border-black hover:bg-gray-200 transition-colors"
                 >
-                  Shop
+                  ARTISTAS
                 </a>
                 <a
                   href="#about"
                   className="flex-1 text-center py-3 hover:bg-gray-200 transition-colors"
                 >
-                  About
+                  SABER MÁS
                 </a>
               </div>
-              <a
-                href="#collections"
-                className="block w-full text-center py-3 hover:bg-gray-200 transition-colors"
-              >
-                Collections
-              </a>
             </div>
           </div>
         </div>
