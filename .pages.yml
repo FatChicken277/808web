@@ -28,3 +28,39 @@ content:
       - name: body
         label: Bio
         type: rich-text
+  - name: caos
+    label: Seccion Caos (Mini Posts)
+    type: collection
+    path: src/content/caos
+    fields:
+      - name: title
+        label: Titulo
+        type: string
+        required: true
+      - name: description
+        label: Descripcion
+        type: string
+      - name: image
+        label: Imagen
+        type: image
+      - name: width
+        label: Columnas (1 = Toda la fila, 2 = Mitad de la fila)
+        type: select
+        options:
+          - "1"
+          - "2"
+      - name: direction
+        label: Direccion (Horizontal o Vertical)
+        type: select
+        options:
+          - "vertical"
+          - "horizontal"
+      - name: distribution
+        label: Distribución (Imagen / Texto)
+        type: select
+        options:
+          - "50/50"
+          - "60/40"
+          - "40/60"
+          - "80/20"
+          - "20/80"

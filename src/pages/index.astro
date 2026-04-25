@@ -11,6 +11,9 @@ import { getCollection } from 'astro:content';
 
 const artistsEntries = await getCollection('artists');
 const artistsData = artistsEntries.map((entry: any) => entry.data);
+
+const caosEntries = await getCollection('caos');
+const caosData = caosEntries.map((entry: any) => entry.data);
 ---
 
 <Layout>
@@ -19,7 +22,7 @@ const artistsData = artistsEntries.map((entry: any) => entry.data);
     <Marquee />
     <ArtistsSection client:load artists={artistsData} />
     <VideoSection client:load />
-    <GridSection />
+    <GridSection posts={caosData} />
     <MapSection />
     <Footer />
   </div>

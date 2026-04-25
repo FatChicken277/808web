@@ -10,6 +10,19 @@ const artistsCollection = defineCollection({
   }),
 });
 
+const caosCollection = defineCollection({
+  loader: glob({ pattern: "**/*.md", base: "./src/content/caos" }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    image: z.string().optional(),
+    width: z.string().optional(),
+    direction: z.string().optional(),
+    distribution: z.string().optional(),
+  }),
+});
+
 export const collections = {
   'artists': artistsCollection,
+  'caos': caosCollection,
 };
