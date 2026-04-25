@@ -50,22 +50,22 @@ export default function GridSection() {
     },
     {
       ratio: "grid-cols-1 md:grid-cols-[35%_65%]",
-      left: { type: "horizontal", v: { img: "/video/video.avif" }, c: { title: "Aesthetic Unit", content: "Minimalist brutalism.", hover: "group-hover:bg-white group-hover:text-black" } },
+      left: { type: "horizontal", v: { img: "/video/video.avif" }, c: { title: "Aesthetic Unit", content: "Minimalist brutalism.", hover: "group-hover:bg-blue-600 group-hover:text-white" } },
       right: { type: "vertical", v: { img: "/video/video.avif" }, c: { title: "Final Cut.", content: "Precision in motion.", hover: "group-hover:bg-orange-500 group-hover:text-white" } }
     }
   ];
 
   return (
-    <section className="w-full bg-white text-black border-t border-black">
+    <section className="w-full bg-white text-black">
       {rows.map((row, idx) => (
-        <div key={idx} className={`grid ${row.ratio} h-auto md:h-[80vh] border-b border-black last:border-b-0`}>
+        <div key={idx} className={`grid ${row.ratio} h-auto md:h-[80vh]`}>
           
           {/* Left Column - Hover group */}
-          <div className={`group flex ${row.left.type === "horizontal" ? "flex-col" : "flex-row"} border-b md:border-b-0 md:border-r border-black overflow-hidden h-full`}>
+          <div className={`group flex ${row.left.type === "horizontal" ? "flex-col" : "flex-row"} overflow-hidden h-full`}>
             <div className="flex-1 overflow-hidden">
               <VisualBlock {...row.left.v} />
             </div>
-            <div className={`flex-1 overflow-hidden border-black ${row.left.type === "vertical" ? "border-l" : "border-t"}`}>
+            <div className="flex-1 overflow-hidden">
               <ContentBlock {...row.left.c} hoverClass={row.left.c.hover} />
             </div>
           </div>
@@ -75,7 +75,7 @@ export default function GridSection() {
             <div className="flex-1 overflow-hidden">
               <VisualBlock {...row.right.v} />
             </div>
-            <div className={`flex-1 overflow-hidden border-black ${row.right.type === "vertical" ? "border-l" : "border-t"}`}>
+            <div className="flex-1 overflow-hidden">
               <ContentBlock {...row.right.c} hoverClass={row.right.c.hover} />
             </div>
           </div>
