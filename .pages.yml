@@ -1,11 +1,9 @@
-media:
-  input: public/images
-  output: /images
+media: public/images
 content:
   - name: settings
     label: Settings
     type: file
-    file: src/content/settings.json
+    path: src/content/settings.json
     fields:
       - name: siteName
         label: Site Name
@@ -13,7 +11,7 @@ content:
   - name: artists
     label: Artists
     type: collection
-    folder: src/content/artists
+    path: src/content/artists
     fields:
       - name: name
         label: Name
