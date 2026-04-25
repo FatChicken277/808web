@@ -86,14 +86,10 @@ export default function Hero() {
         {/* Header */}
         <header className="flex w-full items-start justify-between mix-blend-difference text-white">
           {/* Left: Logos */}
-          <div className="flex items-center gap-2">
-            <h1
-              className="text-3xl font-black uppercase tracking-tighter"
-              style={{ fontFamily: "impact, sans-serif" }}
-            >
-              EN MED
-            </h1>
-            <span className="text-2xl mt-1">👼</span>
+          <div className="flex items-center gap-4">
+            <img src="/logos/01.png" alt="Logo 01" className="h-12 w-auto object-contain" />
+            <img src="/logos/02.png" alt="Logo 02" className="h-12 w-auto object-contain" />
+            <img src="/logos/03.png" alt="Logo 03" className="h-12 w-auto object-contain" />
           </div>
 
           {/* Right: Navbar & Contact */}
