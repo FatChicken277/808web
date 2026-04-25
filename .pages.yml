@@ -81,6 +81,9 @@ content:
       - name: role
         label: Rol en el Evento
         type: string
+      - name: instagram
+        label: Usuario de Instagram (sin el @)
+        type: string
       - name: image
         label: Imagen de Perfil
         type: image

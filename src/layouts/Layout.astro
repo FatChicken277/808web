@@ -29,28 +29,46 @@ import "../styles/global.css";
       
       if (cursor) {
         document.addEventListener('mousemove', (e) => {
+          const target = e.target as HTMLElement;
+          
           cursor.style.left = e.clientX + 'px';
           cursor.style.top = e.clientY + 'px';
+
+          // Check if we are over a native cursor area
+          const requiresNative = target.closest('iframe, .overflow-x-auto, [data-native-cursor]');
+          if (requiresNative) {
+            document.body.classList.add('force-native-cursor');
+            cursor.style.opacity = '0';
+          } else {
+            document.body.classList.remove('force-native-cursor');
+            cursor.style.opacity = '1';
+          }
         });
 
-        const attachHoverEvents = () => {
-          const clickables = document.querySelectorAll('a, button, [role="button"], input, select');
-          clickables.forEach((el) => {
-            el.addEventListener('mouseenter', () => cursor.classList.add('cursor-hover'));
-            el.addEventListener('mouseleave', () => cursor.classList.remove('cursor-hover'));
-          });
-        };
-        
-        attachHoverEvents();
-        // Fallback for dynamically loaded components
-        setInterval(attachHoverEvents, 2000);
+        // Event delegation for hover states
+        document.addEventListener('mouseover', (e) => {
+          const target = e.target as HTMLElement;
+          const isClickable = target.closest('a, button, [role="button"], input, select, .cursor-pointer');
+          if (isClickable) {
+            cursor.classList.add('cursor-hover');
+          } else {
+            cursor.classList.remove('cursor-hover');
+          }
+        });
+
+        document.addEventListener('mouseout', (e) => {
+          if (!e.relatedTarget) cursor.style.opacity = '0';
+        });
+        document.addEventListener('mouseenter', () => {
+          cursor.style.opacity = '1';
+        });
       }
     </script>
   </body>
 </html>
 
-<style>
-  * {
+<style is:global>
+  body:not(.force-native-cursor) * {
     cursor: none !important;
   }
 
@@ -78,10 +96,10 @@ import "../styles/global.css";
   }
 
   #custom-cursor.cursor-hover {
-    width: 40px;
-    height: 40px;
+    width: 24px;
+    height: 24px;
     background-color: white;
-    opacity: 0.8;
+    opacity: 1;
   }
 
   .halation-wrapper {

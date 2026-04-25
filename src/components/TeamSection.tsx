@@ -1,11 +1,28 @@
 import React, { useRef } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
+const InstagramIcon = ({ size = 24 }: { size?: number }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+
 const defaultTeam = [
-  { name: "John Doe", role: "Creative Director" },
-  { name: "Jane Smith", role: "Logistics" },
-  { name: "Alex Johnson", role: "Sound Engineer" },
-  { name: "Sam Wilson", role: "Visuals" },
+  { name: "John Doe", role: "Creative Director", instagram: "johndoe" },
+  { name: "Jane Smith", role: "Logistics", instagram: "janesmith" },
+  { name: "Alex Johnson", role: "Sound Engineer", instagram: "alexjohnson" },
+  { name: "Sam Wilson", role: "Visuals", instagram: "samw" },
 ];
 
 export default function TeamSection({ team = [] }: { team?: any[] }) {
@@ -39,13 +56,13 @@ export default function TeamSection({ team = [] }: { team?: any[] }) {
         <div className="flex gap-4">
           <button
             onClick={() => scroll("left")}
-            className="hover:bg-white/10 transition-all p-2 border border-white/20 rounded-full active:scale-90"
+            className="hover:bg-white/10 transition-all p-2 border border-white/20 rounded-full active:scale-90 cursor-pointer"
           >
             <ArrowLeft size={20} />
           </button>
           <button
             onClick={() => scroll("right")}
-            className="hover:bg-white/10 transition-all p-2 border border-white/20 rounded-full active:scale-90"
+            className="hover:bg-white/10 transition-all p-2 border border-white/20 rounded-full active:scale-90 cursor-pointer"
           >
             <ArrowRight size={20} />
           </button>
@@ -71,12 +88,12 @@ export default function TeamSection({ team = [] }: { team?: any[] }) {
         {displayTeam.map((member, idx) => {
           // Pseudo-random slight rotations
           const rotations = [
-            "group-hover:-rotate-2", 
-            "group-hover:rotate-1", 
-            "group-hover:-rotate-1", 
+            "group-hover:-rotate-2",
+            "group-hover:rotate-1",
+            "group-hover:-rotate-1",
             "group-hover:rotate-2",
             "group-hover:-rotate-3",
-            "group-hover:rotate-3"
+            "group-hover:rotate-3",
           ];
           const randomRotation = rotations[idx % rotations.length];
 
@@ -86,16 +103,30 @@ export default function TeamSection({ team = [] }: { team?: any[] }) {
               className="group relative flex-shrink-0 w-[65vw] sm:w-[40vw] md:w-[22vw] snap-start"
             >
               {/* Inner Wrapper */}
-              <div className={`w-full flex flex-col bg-black/20 border border-white/10 overflow-hidden backdrop-blur-sm transition-all duration-500 ${randomRotation} group-hover:scale-[1.05] group-hover:z-50 group-hover:border-white/40 group-hover:shadow-[0_30px_60px_rgba(0,0,0,0.5)]`}>
+              <div
+                className={`w-full flex flex-col bg-black/20 border border-white/10 overflow-hidden backdrop-blur-sm transition-all duration-500 ${randomRotation} group-hover:scale-[1.05] group-hover:z-50 group-hover:border-white/40 group-hover:shadow-[0_30px_60px_rgba(0,0,0,0.5)]`}
+              >
                 {/* Team Header */}
-                <div className="p-3 flex flex-col justify-center bg-black/40 border-b border-white/10 shrink-0 text-white">
-                  <span className="text-[11px] font-bold uppercase tracking-tight truncate">
-                    {member.name}
-                  </span>
-                  {member.role && (
-                    <span className="text-[9px] font-mono uppercase text-white/60 truncate mt-1">
-                      {member.role}
+                <div className="p-3 flex justify-between items-center bg-black/40 border-b border-white/10 shrink-0 text-white">
+                  <div className="flex flex-col justify-center overflow-hidden pr-2">
+                    <span className="text-[11px] font-bold uppercase tracking-tight truncate">
+                      {member.name}
                     </span>
+                    {member.role && (
+                      <span className="text-[9px] font-mono uppercase text-white/60 truncate mt-1">
+                        {member.role}
+                      </span>
+                    )}
+                  </div>
+                  {member.instagram && (
+                    <a
+                      href={`https://instagram.com/${member.instagram}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-white hover:text-purple-400 transition-colors shrink-0 cursor-pointer"
+                    >
+                      <InstagramIcon size={14} />
+                    </a>
                   )}
                 </div>
 
