@@ -23,12 +23,18 @@ export default function Hero() {
         duration: 0,
         textContent: text,
       })
-      .fromTo(
-        textRef.current,
-        { opacity: 0, scale: 0.8 },
-        { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }
-      )
-      .to(textRef.current, { opacity: 0, scale: 1.1, duration: 0.3, ease: "power2.in", delay: 0.5 });
+        .fromTo(
+          textRef.current,
+          { opacity: 0, scale: 0.8 },
+          { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" },
+        )
+        .to(textRef.current, {
+          opacity: 0,
+          scale: 1.1,
+          duration: 0.3,
+          ease: "power2.in",
+          delay: 0.5,
+        });
     });
 
     // Fade out black screen
@@ -37,13 +43,13 @@ export default function Hero() {
       duration: 1,
       ease: "power2.inOut",
     });
-    
+
     // Animate main content in
     tl.fromTo(
       mainRef.current,
       { opacity: 0, y: 50 },
       { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
-      "-=0.5"
+      "-=0.5",
     );
   }, []);
 
@@ -62,20 +68,14 @@ export default function Hero() {
         ></div>
       </div>
 
-      {/* Background Video */}
+      {/* Background Video/Image Placeholder */}
       <div className="absolute inset-0 z-0 h-full w-full">
-        {/* Placeholder for actual video, using a subtle animated gradient as fallback */}
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="h-full w-full object-cover opacity-60 mix-blend-screen"
-        >
-          {/* User can put their video source here */}
-          {/* <source src="/hero-bg.mp4" type="video/mp4" /> */}
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/40 via-black to-black animate-gradient"></div>
+        <img
+          src="/video/video.avif"
+          alt="Background Preview"
+          className="h-full w-full object-cover opacity-80 mix-blend-screen"
+        />
+        <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 via-transparent to-black/90 animate-gradient"></div>
       </div>
 
       {/* Main Content */}
@@ -87,24 +87,55 @@ export default function Hero() {
         <header className="flex w-full items-start justify-between mix-blend-difference text-white">
           {/* Left: Logos */}
           <div className="flex items-center gap-2">
-            <h1 className="text-3xl font-black uppercase tracking-tighter" style={{ fontFamily: 'impact, sans-serif' }}>EN MED</h1>
+            <h1
+              className="text-3xl font-black uppercase tracking-tighter"
+              style={{ fontFamily: "impact, sans-serif" }}
+            >
+              EN MED
+            </h1>
             <span className="text-2xl mt-1">👼</span>
           </div>
 
           {/* Right: Navbar & Contact */}
           <div className="flex flex-col items-end gap-4">
             <nav className="flex gap-4 text-sm font-bold tracking-widest uppercase">
-              <a href="#showcase" className="hover:text-gray-300 transition-colors">Showcase.</a>
-              <a href="#index" className="hover:text-gray-300 transition-colors">Index.</a>
-              <a href="#studio" className="hover:text-gray-300 transition-colors">Studio.</a>
-              <a href="#contact" className="hover:text-gray-300 transition-colors">Contact.</a>
+              <a
+                href="#showcase"
+                className="hover:text-gray-300 transition-colors"
+              >
+                Showcase.
+              </a>
+              <a
+                href="#index"
+                className="hover:text-gray-300 transition-colors"
+              >
+                Index.
+              </a>
+              <a
+                href="#studio"
+                className="hover:text-gray-300 transition-colors"
+              >
+                Studio.
+              </a>
+              <a
+                href="#contact"
+                className="hover:text-gray-300 transition-colors"
+              >
+                Contact.
+              </a>
             </nav>
-            
+
             <div className="flex items-center gap-4 text-xs font-bold tracking-widest uppercase">
-              <a href="mailto:studio@fluoro.london" className="hover:text-gray-300 transition-colors flex items-center gap-2">
+              <a
+                href="mailto:studio@fluoro.london"
+                className="hover:text-gray-300 transition-colors flex items-center gap-2"
+              >
                 <span>➔</span> STUDIO@FLUORO.LONDON
               </a>
-              <a href="#instagram" className="border border-white rounded-full px-3 py-1 hover:bg-white hover:text-black transition-colors">
+              <a
+                href="#instagram"
+                className="border border-white rounded-full px-3 py-1 hover:bg-white hover:text-black transition-colors"
+              >
                 Instagram
               </a>
             </div>
@@ -116,20 +147,33 @@ export default function Hero() {
           <div className="flex w-full sm:w-60 flex-col items-center space-y-4">
             {/* Event Logo Area */}
             <div className="relative w-full flex items-center justify-center">
-              <img 
-                src="/logos/808.png" 
-                alt="808 FEST" 
+              <img
+                src="/logos/808.png"
+                alt="808 FEST"
                 className="w-48 h-auto object-contain drop-shadow-[0_0_15px_rgba(168,85,247,0.8)]"
               />
             </div>
-            
+
             {/* Action Box */}
             <div className="w-full bg-white text-black text-xs font-bold uppercase tracking-widest">
               <div className="flex border-b border-black">
-                <a href="#shop" className="flex-1 text-center py-3 border-r border-black hover:bg-gray-200 transition-colors">Shop</a>
-                <a href="#about" className="flex-1 text-center py-3 hover:bg-gray-200 transition-colors">About</a>
+                <a
+                  href="#shop"
+                  className="flex-1 text-center py-3 border-r border-black hover:bg-gray-200 transition-colors"
+                >
+                  Shop
+                </a>
+                <a
+                  href="#about"
+                  className="flex-1 text-center py-3 hover:bg-gray-200 transition-colors"
+                >
+                  About
+                </a>
               </div>
-              <a href="#collections" className="block w-full text-center py-3 hover:bg-gray-200 transition-colors">
+              <a
+                href="#collections"
+                className="block w-full text-center py-3 hover:bg-gray-200 transition-colors"
+              >
                 Collections
               </a>
             </div>
