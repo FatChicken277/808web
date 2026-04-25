@@ -95,9 +95,7 @@ export default function Hero() {
         <header className="flex w-full items-start justify-between mix-blend-difference text-white">
           {/* Left: Logos */}
           <div className="flex items-center gap-4">
-            <img src="/logos/01.png" alt="Logo 01" className="h-12 w-auto object-contain" />
-            <img src="/logos/02.png" alt="Logo 02" className="h-12 w-auto object-contain" />
-            <img src="/logos/03.png" alt="Logo 03" className="h-12 w-auto object-contain" />
+            <img src="/logos/logos.png" alt="808 Logos" className="h-5 md:h-8 w-auto object-contain" />
           </div>
 
           {/* Right: Navbar & Contact */}
