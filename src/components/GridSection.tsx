@@ -23,7 +23,7 @@ const VisualBlock = ({ title, img, bg }: Partial<BlockProps>) => (
 );
 
 const ContentBlock = ({ title, content, hoverClass }: Partial<BlockProps>) => (
-  <div className={`flex-1 p-6 bg-white transition-colors duration-500 flex flex-col justify-between h-full w-full ${hoverClass}`}>
+  <div className={`flex-1 p-6 bg-black text-white transition-colors duration-500 flex flex-col justify-between h-full w-full ${hoverClass}`}>
     <div className="space-y-2">
       <h3 className="text-2xl md:text-3xl font-black uppercase leading-tight tracking-tighter">
         {title}
@@ -40,7 +40,7 @@ export default function GridSection() {
   const rows = [
     {
       ratio: "grid-cols-1 md:grid-cols-[40%_60%]",
-      left: { type: "horizontal", v: { img: "/video/video.avif" }, c: { title: "Solarpunk Delivery", content: "Urban logistics reimagined.", hover: "group-hover:bg-black group-hover:text-white" } },
+      left: { type: "horizontal", v: { img: "/video/video.avif" }, c: { title: "Solarpunk Delivery", content: "Urban logistics reimagined.", hover: "group-hover:bg-white group-hover:text-black" } },
       right: { type: "vertical", v: { img: "/video/video.avif" }, c: { title: "Keep Up.", content: "Fast paced movement.", hover: "group-hover:bg-purple-600 group-hover:text-white" } }
     },
     {
@@ -56,7 +56,7 @@ export default function GridSection() {
   ];
 
   return (
-    <section className="w-full bg-white text-black">
+    <section className="w-full bg-black text-white">
       {rows.map((row, idx) => (
         <div key={idx} className={`grid ${row.ratio} h-auto md:h-[80vh]`}>
           
