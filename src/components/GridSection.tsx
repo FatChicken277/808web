@@ -39,10 +39,12 @@ const ContentBlock = ({ title, content, hoverClass }: Partial<BlockProps>) => (
 export default function GridSection() {
   const rows = [
     {
+      ratio: "grid-cols-1 md:grid-cols-[40%_60%]",
       left: { type: "horizontal", v: { title: "V2" }, c: { title: "Solarpunk Delivery", content: "Urban logistics reimagined.", hover: "group-hover:bg-black group-hover:text-white" } },
       right: { type: "vertical", v: { img: "/video/video.avif" }, c: { title: "Keep Up.", content: "Fast paced movement.", hover: "group-hover:bg-purple-600 group-hover:text-white" } }
     },
     {
+      ratio: "grid-cols-1 md:grid-cols-[55%_45%]",
       left: { type: "vertical", v: { title: "808" }, c: { title: "The Noise", content: "Low frequency oscillations.", hover: "group-hover:bg-green-500 group-hover:text-black" } },
       right: { type: "horizontal", v: { img: "/video/video.avif" }, c: { title: "Chaos System", content: "Asymmetric design patterns.", hover: "group-hover:bg-red-600 group-hover:text-white" } }
     }
@@ -51,7 +53,7 @@ export default function GridSection() {
   return (
     <section className="w-full bg-white text-black border-t border-black">
       {rows.map((row, idx) => (
-        <div key={idx} className="grid grid-cols-1 md:grid-cols-2 h-auto md:h-[80vh] border-b border-black last:border-b-0">
+        <div key={idx} className={`grid ${row.ratio} h-auto md:h-[80vh] border-b border-black last:border-b-0`}>
           
           {/* Left Column - Hover group */}
           <div className={`group flex ${row.left.type === "horizontal" ? "flex-col" : "flex-row"} border-b md:border-b-0 md:border-r border-black overflow-hidden h-full`}>
