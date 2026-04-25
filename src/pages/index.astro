@@ -3,10 +3,12 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/Hero';
 import GridSection from '../components/GridSection';
 import Marquee from '../components/Marquee';
+import ArtistsSection from '../components/ArtistsSection';
 ---
 
 <Layout>
   <Hero client:load />
   <Marquee />
   <GridSection />
+  <ArtistsSection client:load />
 </Layout>
