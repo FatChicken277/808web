@@ -64,3 +64,22 @@ content:
           - "40/60"
           - "80/20"
           - "20/80"
+  - name: team
+    label: Equipo Organizador
+    label_singular: Miembro
+    folder: src/content/team
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - name: title
+        label: Nombre del Archivo (Interno)
+        type: string
+      - name: name
+        label: Nombre Completo
+        type: string
+      - name: role
+        label: Rol en el Evento
+        type: string
+      - name: image
+        label: Imagen de Perfil
+        type: image

@@ -22,7 +22,17 @@ const caosCollection = defineCollection({
   }),
 });
 
+const teamCollection = defineCollection({
+  type: 'content',
+  schema: z.object({
+    name: z.string(),
+    role: z.string().optional(),
+    image: z.string().optional(),
+  }),
+});
+
 export const collections = {
   'artists': artistsCollection,
   'caos': caosCollection,
+  'team': teamCollection,
 };

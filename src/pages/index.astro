@@ -6,6 +6,7 @@ import Marquee from '../components/Marquee';
 import ArtistsSection from '../components/ArtistsSection';
 import VideoSection from '../components/VideoSection';
 import MapSection from '../components/MapSection';
+import TeamSection from '../components/TeamSection';
 import Footer from '../components/Footer';
 import { getCollection } from 'astro:content';
 
@@ -14,6 +15,9 @@ const artistsData = artistsEntries.map((entry: any) => entry.data);
 
 const caosEntries = await getCollection('caos');
 const caosData = caosEntries.map((entry: any) => entry.data);
+
+const teamEntries = await getCollection('team');
+const teamData = teamEntries.map((entry: any) => entry.data);
 ---
 
 <Layout>
@@ -24,6 +28,7 @@ const caosData = caosEntries.map((entry: any) => entry.data);
     <VideoSection client:load />
     <GridSection posts={caosData} />
     <MapSection />
+    <TeamSection client:load team={teamData} />
     <Footer />
   </div>
 </Layout>
