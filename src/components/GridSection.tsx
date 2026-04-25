@@ -40,17 +40,17 @@ export default function GridSection() {
   const rows = [
     {
       ratio: "grid-cols-1 md:grid-cols-[40%_60%]",
-      left: { type: "horizontal", v: { title: "V2" }, c: { title: "Solarpunk Delivery", content: "Urban logistics reimagined.", hover: "group-hover:bg-black group-hover:text-white" } },
+      left: { type: "horizontal", v: { img: "/video/video.avif" }, c: { title: "Solarpunk Delivery", content: "Urban logistics reimagined.", hover: "group-hover:bg-black group-hover:text-white" } },
       right: { type: "vertical", v: { img: "/video/video.avif" }, c: { title: "Keep Up.", content: "Fast paced movement.", hover: "group-hover:bg-purple-600 group-hover:text-white" } }
     },
     {
       ratio: "grid-cols-1 md:grid-cols-[55%_45%]",
-      left: { type: "vertical", v: { title: "808" }, c: { title: "The Noise", content: "Low frequency oscillations.", hover: "group-hover:bg-green-500 group-hover:text-black" } },
+      left: { type: "vertical", v: { img: "/video/video.avif" }, c: { title: "The Noise", content: "Low frequency oscillations.", hover: "group-hover:bg-green-500 group-hover:text-black" } },
       right: { type: "horizontal", v: { img: "/video/video.avif" }, c: { title: "Chaos System", content: "Asymmetric design patterns.", hover: "group-hover:bg-red-600 group-hover:text-white" } }
     },
     {
       ratio: "grid-cols-1 md:grid-cols-[35%_65%]",
-      left: { type: "horizontal", v: { title: "RAW" }, c: { title: "Aesthetic Unit", content: "Minimalist brutalism.", hover: "group-hover:bg-white group-hover:text-black" } },
+      left: { type: "horizontal", v: { img: "/video/video.avif" }, c: { title: "Aesthetic Unit", content: "Minimalist brutalism.", hover: "group-hover:bg-white group-hover:text-black" } },
       right: { type: "vertical", v: { img: "/video/video.avif" }, c: { title: "Final Cut.", content: "Precision in motion.", hover: "group-hover:bg-orange-500 group-hover:text-white" } }
     }
   ];
