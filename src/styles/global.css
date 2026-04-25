@@ -18,3 +18,22 @@
 .animate-marquee2 {
   animation: marquee2 25s linear infinite;
 }
+
+/* Custom Page Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #666666;
+}

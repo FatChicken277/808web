@@ -12,7 +12,7 @@ interface BlockProps {
 const VisualBlock = ({ title, img, bg }: Partial<BlockProps>) => (
   <div className={`flex-1 relative overflow-hidden ${bg || "bg-[#b5b5b5]"} flex items-center justify-center h-full w-full`}>
     {img ? (
-      <img src={img} alt={title} className="w-full h-full object-cover grayscale transition-all duration-700 opacity-80" />
+      <img src={img} alt={title} className="w-full h-full object-cover transition-all duration-700" />
     ) : (
       <h2 className="text-5xl md:text-7xl font-black text-white italic tracking-tighter opacity-90 select-none">
         {title}

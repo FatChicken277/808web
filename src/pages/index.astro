@@ -8,7 +8,9 @@ import ArtistsSection from '../components/ArtistsSection';
 
 <Layout>
   <Hero client:load />
-  <Marquee />
-  <GridSection />
-  <ArtistsSection client:load />
+  <div id="delayed-content" class="hidden">
+    <Marquee />
+    <ArtistsSection client:load />
+    <GridSection />
+  </div>
 </Layout>

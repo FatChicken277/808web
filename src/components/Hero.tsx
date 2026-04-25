@@ -11,14 +11,9 @@ export default function Hero() {
   const introTexts = ["808", "ENMED", "el mejor evento del año", "trapperia"];
 
   useEffect(() => {
-    // Disable scroll
-    document.body.style.overflow = "hidden";
-
     const tl = gsap.timeline({
       onComplete: () => {
         setIntroFinished(true);
-        // Re-enable scroll
-        document.body.style.overflow = "auto";
       },
     });
 
@@ -40,6 +35,14 @@ export default function Hero() {
           ease: "power2.in",
           delay: 0.25,
         });
+    });
+
+    // Reveal the rest of the page BEFORE the black screen fades out.
+    // This forces the scrollbar to appear while the screen is still black,
+    // so when the layout fades in, it's already perfectly positioned with no jumps.
+    tl.call(() => {
+      const delayedContent = document.getElementById("delayed-content");
+      if (delayedContent) delayedContent.classList.remove("hidden");
     });
 
     // Fade out black screen
