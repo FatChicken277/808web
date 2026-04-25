@@ -11,13 +11,18 @@ export default function Hero() {
   const introTexts = ["808", "ENMED", "el mejor evento del año", "trapperia"];
 
   useEffect(() => {
+    // Disable scroll
+    document.body.style.overflow = "hidden";
+
     const tl = gsap.timeline({
       onComplete: () => {
         setIntroFinished(true);
+        // Re-enable scroll
+        document.body.style.overflow = "auto";
       },
     });
 
-    // Animate text changes
+    // Animate text changes faster
     introTexts.forEach((text, index) => {
       tl.to(textRef.current, {
         duration: 0,
@@ -26,30 +31,30 @@ export default function Hero() {
         .fromTo(
           textRef.current,
           { opacity: 0, scale: 0.8 },
-          { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" },
+          { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" },
         )
         .to(textRef.current, {
           opacity: 0,
           scale: 1.1,
-          duration: 0.3,
+          duration: 0.2,
           ease: "power2.in",
-          delay: 0.5,
+          delay: 0.25,
         });
     });
 
     // Fade out black screen
     tl.to(introRef.current, {
       opacity: 0,
-      duration: 1,
+      duration: 0.8,
       ease: "power2.inOut",
     });
 
     // Animate main content in
     tl.fromTo(
       mainRef.current,
-      { opacity: 0, y: 50 },
-      { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
-      "-=0.5",
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
+      "-=0.4",
     );
   }, []);
 
