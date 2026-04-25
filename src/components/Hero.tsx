@@ -1,0 +1,141 @@
+import React, { useEffect, useRef, useState } from "react";
+import gsap from "gsap";
+import { Button } from "./ui/button";
+
+export default function Hero() {
+  const introRef = useRef<HTMLDivElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLDivElement>(null);
+  const [introFinished, setIntroFinished] = useState(false);
+
+  const introTexts = ["808", "ENMED", "el mejor evento del año", "trapperia"];
+
+  useEffect(() => {
+    const tl = gsap.timeline({
+      onComplete: () => {
+        setIntroFinished(true);
+      },
+    });
+
+    // Animate text changes
+    introTexts.forEach((text, index) => {
+      tl.to(textRef.current, {
+        duration: 0,
+        textContent: text,
+      })
+      .fromTo(
+        textRef.current,
+        { opacity: 0, scale: 0.8 },
+        { opacity: 1, scale: 1, duration: 0.4, ease: "power2.out" }
+      )
+      .to(textRef.current, { opacity: 0, scale: 1.1, duration: 0.3, ease: "power2.in", delay: 0.5 });
+    });
+
+    // Fade out black screen
+    tl.to(introRef.current, {
+      opacity: 0,
+      duration: 1,
+      ease: "power2.inOut",
+    });
+    
+    // Animate main content in
+    tl.fromTo(
+      mainRef.current,
+      { opacity: 0, y: 50 },
+      { opacity: 1, y: 0, duration: 1, ease: "power3.out" },
+      "-=0.5"
+    );
+  }, []);
+
+  return (
+    <div className="relative min-h-screen w-full overflow-hidden bg-black font-sans text-white">
+      {/* Intro Overlay */}
+      <div
+        ref={introRef}
+        className={`fixed inset-0 z-50 flex items-center justify-center bg-black ${
+          introFinished ? "pointer-events-none" : ""
+        }`}
+      >
+        <div
+          ref={textRef}
+          className="text-4xl md:text-7xl font-bold tracking-widest text-white uppercase text-center"
+        ></div>
+      </div>
+
+      {/* Background Video */}
+      <div className="absolute inset-0 z-0 h-full w-full">
+        {/* Placeholder for actual video, using a subtle animated gradient as fallback */}
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="h-full w-full object-cover opacity-60 mix-blend-screen"
+        >
+          {/* User can put their video source here */}
+          {/* <source src="/hero-bg.mp4" type="video/mp4" /> */}
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/40 via-black to-black animate-gradient"></div>
+      </div>
+
+      {/* Main Content */}
+      <div
+        ref={mainRef}
+        className="relative z-10 flex h-full min-h-screen flex-col px-6 py-6 md:px-12 md:py-8 justify-between"
+      >
+        {/* Header */}
+        <header className="flex w-full items-start justify-between mix-blend-difference text-white">
+          {/* Left: Logos */}
+          <div className="flex items-center gap-2">
+            <h1 className="text-3xl font-black uppercase tracking-tighter" style={{ fontFamily: 'impact, sans-serif' }}>EN MED</h1>
+            <span className="text-2xl mt-1">👼</span>
+          </div>
+
+          {/* Right: Navbar & Contact */}
+          <div className="flex flex-col items-end gap-4">
+            <nav className="flex gap-4 text-sm font-bold tracking-widest uppercase">
+              <a href="#showcase" className="hover:text-gray-300 transition-colors">Showcase.</a>
+              <a href="#index" className="hover:text-gray-300 transition-colors">Index.</a>
+              <a href="#studio" className="hover:text-gray-300 transition-colors">Studio.</a>
+              <a href="#contact" className="hover:text-gray-300 transition-colors">Contact.</a>
+            </nav>
+            
+            <div className="flex items-center gap-4 text-xs font-bold tracking-widest uppercase">
+              <a href="mailto:studio@fluoro.london" className="hover:text-gray-300 transition-colors flex items-center gap-2">
+                <span>➔</span> STUDIO@FLUORO.LONDON
+              </a>
+              <a href="#instagram" className="border border-white rounded-full px-3 py-1 hover:bg-white hover:text-black transition-colors">
+                Instagram
+              </a>
+            </div>
+          </div>
+        </header>
+
+        {/* Hero Body */}
+        <div className="flex flex-1 flex-col items-end justify-start pt-20">
+          <div className="flex w-full sm:w-60 flex-col items-center space-y-4">
+            {/* Event Logo Area */}
+            <div className="relative w-full flex items-center justify-center">
+              <img 
+                src="/logos/808.png" 
+                alt="808 FEST" 
+                className="w-48 h-auto object-contain drop-shadow-[0_0_15px_rgba(168,85,247,0.8)]"
+              />
+            </div>
+            
+            {/* Action Box */}
+            <div className="w-full bg-white text-black text-xs font-bold uppercase tracking-widest">
+              <div className="flex border-b border-black">
+                <a href="#shop" className="flex-1 text-center py-3 border-r border-black hover:bg-gray-200 transition-colors">Shop</a>
+                <a href="#about" className="flex-1 text-center py-3 hover:bg-gray-200 transition-colors">About</a>
+              </div>
+              <a href="#collections" className="block w-full text-center py-3 hover:bg-gray-200 transition-colors">
+                Collections
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
