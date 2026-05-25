@@ -1,7 +1,6 @@
 ---
-title: "Jane Doe"
-name: "Jane Doe"
-role: "Creative Director"
-instagram: "janedoe"
-image: "/video/video.avif"
+name: El Dictador
+role: Admin
+instagram: janedoe
+image: /images/king.jpeg
 ---
