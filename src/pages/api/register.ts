@@ -41,9 +41,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const qr = qrcode(0, 'M');
     qr.addData(qrUrl);
     qr.make();
-    // cellSize=4, margin=2
+    // Use base64 image for email, because Gmail strips inline <svg> tags!
+    const qrDataUrl = qr.createDataURL(6, 2);
+
+    // Compute SVG for the frontend to render
     let qrSvg = qr.createSvgTag(4, 2);
-    // Hacer que el SVG sea responsive (ocupe 100% del contenedor)
     const match = qrSvg.match(/width="(\d+)(px)?" height="(\d+)(px)?"/);
     if (match) {
       qrSvg = qrSvg.replace(match[0], `width="100%" height="100%" viewBox="0 0 ${match[1]} ${match[3]}"`);
@@ -63,7 +65,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
               <h2>HOLA ${fullName.toUpperCase()}, AQUÍ ESTÁ TU TICKET</h2>
               <p>Muestra este código QR en la entrada del evento.</p>
               <div style="background: white; padding: 20px; display: inline-block; margin-top: 20px; border-radius: 10px;">
-                ${qrSvg}
+                <img src="${qrDataUrl}" alt="Ticket QR" style="display: block; width: 200px; height: 200px;" />
               </div>
               <p style="margin-top: 40px; opacity: 0.7; font-size: 12px;">Token: ${token}</p>
             </div>
