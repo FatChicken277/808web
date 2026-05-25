@@ -25,42 +25,46 @@ import "../styles/global.css";
     <div id="custom-cursor"></div>
 
     <script>
-      const cursor = document.getElementById('custom-cursor');
-      
+      const cursor = document.getElementById("custom-cursor");
+
       if (cursor) {
-        document.addEventListener('mousemove', (e) => {
+        document.addEventListener("mousemove", (e) => {
           const target = e.target as HTMLElement;
-          
-          cursor.style.left = e.clientX + 'px';
-          cursor.style.top = e.clientY + 'px';
+
+          cursor.style.left = e.clientX + "px";
+          cursor.style.top = e.clientY + "px";
 
           // Check if we are over a native cursor area
-          const requiresNative = target.closest('iframe, .overflow-x-auto, [data-native-cursor]');
+          const requiresNative = target.closest(
+            "iframe, .overflow-x-auto, [data-native-cursor]",
+          );
           if (requiresNative) {
-            document.body.classList.add('force-native-cursor');
-            cursor.style.opacity = '0';
+            document.body.classList.add("force-native-cursor");
+            cursor.style.opacity = "0";
           } else {
-            document.body.classList.remove('force-native-cursor');
-            cursor.style.opacity = '1';
+            document.body.classList.remove("force-native-cursor");
+            cursor.style.opacity = "1";
           }
         });
 
         // Event delegation for hover states
-        document.addEventListener('mouseover', (e) => {
+        document.addEventListener("mouseover", (e) => {
           const target = e.target as HTMLElement;
-          const isClickable = target.closest('a, button, [role="button"], input, select, .cursor-pointer');
+          const isClickable = target.closest(
+            'a, button, [role="button"], input, select, .cursor-pointer',
+          );
           if (isClickable) {
-            cursor.classList.add('cursor-hover');
+            cursor.classList.add("cursor-hover");
           } else {
-            cursor.classList.remove('cursor-hover');
+            cursor.classList.remove("cursor-hover");
           }
         });
 
-        document.addEventListener('mouseout', (e) => {
-          if (!e.relatedTarget) cursor.style.opacity = '0';
+        document.addEventListener("mouseout", (e) => {
+          if (!e.relatedTarget) cursor.style.opacity = "0";
         });
-        document.addEventListener('mouseenter', () => {
-          cursor.style.opacity = '1';
+        document.addEventListener("mouseenter", () => {
+          cursor.style.opacity = "1";
         });
       }
     </script>
@@ -68,8 +72,10 @@ import "../styles/global.css";
 </html>
 
 <style is:global>
-  body:not(.force-native-cursor) * {
-    cursor: none !important;
+  @media (hover: hover) and (pointer: fine) {
+    body:not(.force-native-cursor) * {
+      cursor: none !important;
+    }
   }
 
   html,
@@ -91,8 +97,17 @@ import "../styles/global.css";
     pointer-events: none;
     z-index: 100000;
     transform: translate(-50%, -50%);
-    transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
+    transition:
+      width 0.2s ease,
+      height 0.2s ease,
+      background-color 0.2s ease;
     mix-blend-mode: difference;
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    #custom-cursor {
+      display: none !important;
+    }
   }
 
   #custom-cursor.cursor-hover {
@@ -156,7 +171,7 @@ import "../styles/global.css";
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     background-repeat: repeat;
     background-size: 650px 650px;
-    opacity: 0.22;
+    opacity: 0.1;
     mix-blend-mode: hard-light;
     animation: grain-animation 0.4s steps(4) infinite;
   }
