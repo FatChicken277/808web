@@ -4,6 +4,6 @@ compatibility_date = "2024-04-05"
 [[d1_databases]]
 binding = "DB"
 database_name = "808web-db"
-database_id = "local-db"
+database_id = "fda35978-1b46-4a16-8bff-9ed629a38984"
 preview_database_id = "local-db"
 migrations_dir = "drizzle"
