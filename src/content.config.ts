@@ -23,7 +23,7 @@ const caosCollection = defineCollection({
 });
 
 const teamCollection = defineCollection({
-  type: 'content',
+  loader: glob({ pattern: "**/*.md", base: "./src/content/team" }),
   schema: z.object({
     name: z.string(),
     role: z.string().optional(),
