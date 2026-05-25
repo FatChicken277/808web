@@ -126,25 +126,25 @@ export default function Hero({
                 href="#showcase"
                 className="hover:text-gray-300 transition-colors"
               >
-                Showcase.
+                Galería.
               </a>
               <a
                 href="#index"
                 className="hover:text-gray-300 transition-colors"
               >
-                Index.
+                Inicio.
               </a>
               <a
                 href="#studio"
                 className="hover:text-gray-300 transition-colors"
               >
-                Studio.
+                Estudio.
               </a>
               <a
                 href="#contact"
                 className="hover:text-gray-300 transition-colors"
               >
-                Contact.
+                Contacto.
               </a>
             </nav>
 

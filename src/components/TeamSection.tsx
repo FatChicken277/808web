@@ -50,7 +50,7 @@ export default function TeamSection({ team = [] }: { team?: any[] }) {
             [equipo]
           </h2>
           <span className="text-[10px] font-mono uppercase tracking-widest opacity-60 hidden sm:inline">
-            Organizing Team
+            Equipo Organizador
           </span>
         </div>
         <div className="flex gap-4">

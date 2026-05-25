@@ -50,10 +50,10 @@ export default function ArtistsSection({ artists = [] }: { artists?: any[] }) {
       <div className="flex items-center justify-between mb-8 px-6 md:px-12">
         <div className="flex items-baseline gap-4">
           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">
-            [artists]
+            [artistas]
           </h2>
           <span className="text-[10px] font-mono uppercase tracking-widest opacity-60 hidden sm:inline">
-            In alphabetical order
+            En orden alfabético
           </span>
         </div>
         <div className="flex gap-4">

@@ -3,33 +3,33 @@ media:
   output: /images
 content:
   - name: settings
-    label: Settings
+    label: Configuración
     type: file
     path: src/content/settings.json
     fields:
       - name: siteName
-        label: Site Name
+        label: Nombre del Sitio
         type: string
       - name: heroVideo
-        label: Hero Video (o Imagen)
-        type: file
+        label: Video Hero (URL o Ruta)
+        type: string
       - name: sectionVideo
-        label: Video de la Sección (o Imagen)
-        type: file
+        label: Video de la Sección (URL o Ruta)
+        type: string
   - name: artists
-    label: Artists
+    label: Artistas
     type: collection
     path: src/content/artists
     fields:
       - name: name
-        label: Name
+        label: Nombre
         type: string
         required: true
       - name: instagram
         label: Instagram
         type: string
       - name: image
-        label: Image
+        label: Imagen
         type: image
   - name: caos
     label: Seccion Caos (Mini Posts)
@@ -78,6 +78,7 @@ content:
       - name: name
         label: Nombre Completo
         type: string
+        required: true
       - name: role
         label: Rol en el Evento
         type: string
