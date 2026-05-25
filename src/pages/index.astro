@@ -22,14 +22,14 @@ const teamData = teamEntries.map((entry: any) => entry.data);
 ---
 
 <Layout>
-  <Hero client:load video={settings.heroVideo} />
+  <Hero client:only="react" video={settings.heroVideo} />
   <div id="delayed-content" class="hidden">
     <Marquee />
-    <ArtistsSection client:load artists={artistsData} />
-    <VideoSection client:load video={settings.sectionVideo} />
+    <ArtistsSection client:only="react" artists={artistsData} />
+    <VideoSection client:only="react" video={settings.sectionVideo} />
     <GridSection posts={caosData} />
     <MapSection />
-    <TeamSection client:load team={teamData} />
+    <TeamSection client:only="react" team={teamData} />
     <Footer />
   </div>
 </Layout>

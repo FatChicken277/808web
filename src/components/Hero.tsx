@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
-import { Button } from "./ui/button";
+import TicketModal from "./TicketModal";
 
 export default function Hero({
   video = "/video/video.avif",
@@ -11,6 +11,7 @@ export default function Hero({
   const textRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
   const [introFinished, setIntroFinished] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const introTexts = ["808 Fest"];
 
@@ -68,141 +69,145 @@ export default function Hero({
   const isVideo = video?.match(/\.(mp4|webm|ogg)$/i);
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden bg-black font-sans text-white">
-      {/* Intro Overlay */}
-      <div
-        ref={introRef}
-        className={`fixed inset-0 z-50 flex items-center justify-center bg-black ${
-          introFinished ? "pointer-events-none" : ""
-        }`}
-      >
+    <>
+      <div className="relative min-h-screen w-full overflow-hidden bg-black font-sans text-white">
+        {/* Intro Overlay */}
         <div
-          ref={textRef}
-          className="text-4xl md:text-7xl font-bold tracking-widest text-white uppercase text-center"
-        ></div>
-      </div>
+          ref={introRef}
+          className={`fixed inset-0 z-50 flex items-center justify-center bg-black ${
+            introFinished ? "pointer-events-none" : ""
+          }`}
+        >
+          <div
+            ref={textRef}
+            className="text-4xl md:text-7xl font-bold tracking-widest text-white uppercase text-center"
+          ></div>
+        </div>
 
-      {/* Background Video/Image Placeholder */}
-      <div className="absolute inset-0 z-0 h-full w-full">
-        {isVideo ? (
-          <video
-            src={video}
-            className="h-full w-full object-cover opacity-80 mix-blend-screen"
-            autoPlay
-            muted
-            loop
-            playsInline
-          />
-        ) : (
-          <img
-            src={video}
-            alt="Background Preview"
-            className="h-full w-full object-cover opacity-80 mix-blend-screen"
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 via-transparent to-black/90 animate-gradient"></div>
-      </div>
-
-      {/* Main Content */}
-      <div
-        ref={mainRef}
-        className="relative z-10 flex h-full min-h-screen flex-col px-6 py-6 md:px-12 md:py-8 justify-between"
-      >
-        {/* Header */}
-        <header className="flex w-full items-start justify-between mix-blend-difference text-white">
-          {/* Left: Logos */}
-          <div className="flex items-center gap-4">
-            <img
-              src="/logos/logos.png"
-              alt="808 Logos"
-              className="h-5 md:h-8 w-auto object-contain"
+        {/* Background Video/Image Placeholder */}
+        <div className="absolute inset-0 z-0 h-full w-full">
+          {isVideo ? (
+            <video
+              src={video}
+              className="h-full w-full object-cover opacity-80 mix-blend-screen"
+              autoPlay
+              muted
+              loop
+              playsInline
             />
-          </div>
+          ) : (
+            <img
+              src={video}
+              alt="Background Preview"
+              className="h-full w-full object-cover opacity-80 mix-blend-screen"
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 via-transparent to-black/90 animate-gradient"></div>
+        </div>
 
-          {/* Right: Navbar & Contact */}
-          <div className="flex flex-col items-end gap-4">
-            <nav className="flex gap-4 text-sm font-bold tracking-widest uppercase">
-              <a
-                href="#showcase"
-                className="hover:text-gray-300 transition-colors"
-              >
-                Galería.
-              </a>
-              <a
-                href="#index"
-                className="hover:text-gray-300 transition-colors"
-              >
-                Inicio.
-              </a>
-              <a
-                href="#studio"
-                className="hover:text-gray-300 transition-colors"
-              >
-                Estudio.
-              </a>
-              <a
-                href="#contact"
-                className="hover:text-gray-300 transition-colors"
-              >
-                Contacto.
-              </a>
-            </nav>
-
-            <div className="flex items-center gap-4 text-xs font-bold tracking-widest uppercase">
-              <a
-                href="mailto:studio@fluoro.london"
-                className="hover:text-gray-300 transition-colors flex items-center gap-2"
-              >
-                <span>➔</span> STUDIO@FLUORO.LONDON
-              </a>
-              <a
-                href="#instagram"
-                className="border border-white rounded-full px-3 py-1 hover:bg-white hover:text-black transition-colors"
-              >
-                Instagram
-              </a>
-            </div>
-          </div>
-        </header>
-
-        {/* Hero Body */}
-        <div className="flex flex-1 flex-col items-end justify-start pt-20">
-          <div className="flex w-full sm:w-60 flex-col items-center space-y-4">
-            {/* Event Logo Area */}
-            <div className="relative w-full flex items-center justify-center">
+        {/* Main Content */}
+        <div
+          ref={mainRef}
+          className="relative z-10 flex h-full min-h-screen flex-col px-6 py-6 md:px-12 md:py-8 justify-between"
+        >
+          {/* Header */}
+          <header className="flex w-full items-start justify-between mix-blend-difference text-white">
+            {/* Left: Logos */}
+            <div className="flex items-center gap-4">
               <img
-                src="/logos/808.png"
-                alt="808 FEST"
-                className="w-48 h-auto object-contain drop-shadow-[0_0_15px_rgba(168,85,247,0.8)]"
+                src="/logos/logos.png"
+                alt="808 Logos"
+                className="h-5 md:h-8 w-auto object-contain"
               />
             </div>
 
-            {/* Action Box */}
-            <div className="w-full bg-white text-black text-xs font-bold uppercase tracking-widest mt-5 flex flex-col">
-              <a
-                href="#tickets"
-                className="block w-full text-center py-3 border-b border-black hover:bg-[#39FF14] transition-colors"
-              >
-                OBTENER TICKETS
-              </a>
-              <div className="flex w-full">
+            {/* Right: Navbar & Contact */}
+            <div className="flex flex-col items-end gap-4">
+              <nav className="flex gap-4 text-sm font-bold tracking-widest uppercase">
                 <a
-                  href="#artistas"
-                  className="flex-1 text-center py-3 border-r border-black hover:bg-gray-200 transition-colors"
+                  href="#showcase"
+                  className="hover:text-gray-300 transition-colors"
                 >
-                  ARTISTAS
+                  Galería.
                 </a>
                 <a
-                  href="#about"
-                  className="flex-1 text-center py-3 hover:bg-gray-200 transition-colors"
+                  href="#index"
+                  className="hover:text-gray-300 transition-colors"
                 >
-                  SABER MÁS
+                  Inicio.
                 </a>
+                <a
+                  href="#studio"
+                  className="hover:text-gray-300 transition-colors"
+                >
+                  Estudio.
+                </a>
+                <a
+                  href="#contact"
+                  className="hover:text-gray-300 transition-colors"
+                >
+                  Contacto.
+                </a>
+              </nav>
+
+              <div className="flex items-center gap-4 text-xs font-bold tracking-widest uppercase">
+                <a
+                  href="mailto:studio@fluoro.london"
+                  className="hover:text-gray-300 transition-colors flex items-center gap-2"
+                >
+                  <span>➔</span> STUDIO@FLUORO.LONDON
+                </a>
+                <a
+                  href="#instagram"
+                  className="border border-white rounded-full px-3 py-1 hover:bg-white hover:text-black transition-colors"
+                >
+                  Instagram
+                </a>
+              </div>
+            </div>
+          </header>
+
+          {/* Hero Body */}
+          <div className="flex flex-1 flex-col items-end justify-start pt-20">
+            <div className="flex w-full sm:w-60 flex-col items-center space-y-4">
+              {/* Event Logo Area */}
+              <div className="relative w-full flex items-center justify-center">
+                <img
+                  src="/logos/808.png"
+                  alt="808 FEST"
+                  className="w-48 h-auto object-contain drop-shadow-[0_0_15px_rgba(168,85,247,0.8)]"
+                />
+              </div>
+
+              {/* Action Box */}
+              <div className="w-full bg-white text-black text-xs font-bold uppercase tracking-widest mt-5 flex flex-col">
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="block w-full text-center py-3 border-b border-black hover:bg-[#39FF14] transition-colors"
+                >
+                  OBTENER TICKETS
+                </button>
+                <div className="flex w-full">
+                  <a
+                    href="#artistas"
+                    className="flex-1 text-center py-3 border-r border-black hover:bg-gray-200 transition-colors"
+                  >
+                    ARTISTAS
+                  </a>
+                  <a
+                    href="#about"
+                    className="flex-1 text-center py-3 hover:bg-gray-200 transition-colors"
+                  >
+                    SABER MÁS
+                  </a>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+      
+      <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+    </>
   );
 }
