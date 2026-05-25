@@ -29,7 +29,7 @@ export default function Footer() {
           <div className="space-y-4">
             <h3 className="opacity-40">Contact</h3>
             <div className="flex flex-col space-y-2">
-              <a href="mailto:info@808fest.com" className="hover:text-purple-500 transition-colors">info@808fest.com</a>
+              <a href="mailto:info@el808fest.com" className="hover:text-purple-500 transition-colors">info@el808fest.com</a>
               <a href="#" className="hover:text-purple-500 transition-colors">Press & Media</a>
             </div>
           </div>

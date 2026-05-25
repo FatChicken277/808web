@@ -37,7 +37,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     });
 
     // Generate QR
-    const qrUrl = `https://808fest.com/ticket/${token}`;
+    const qrUrl = `https://el808fest.com/ticket/${token}`;
     const qr = qrcode(0, 'M');
     qr.addData(qrUrl);
     qr.make();
@@ -51,23 +51,35 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Send Email
     if ((env as any).RESEND_API_KEY) {
-      const resend = new Resend((env as any).RESEND_API_KEY);
-      await resend.emails.send({
-        from: '808 Fest <tickets@808fest.com>', // Update this to verified domain later
-        to: email,
-        subject: 'Tu ticket para 808 Fest',
-        html: `
-          <div style="font-family: monospace; background-color: #000; color: #fff; padding: 40px; text-align: center;">
-            <h1 style="color: #39FF14; text-transform: uppercase;">808 FEST</h1>
-            <h2>HOLA ${fullName.toUpperCase()}, AQUÍ ESTÁ TU TICKET</h2>
-            <p>Muestra este código QR en la entrada del evento.</p>
-            <div style="background: white; padding: 20px; display: inline-block; margin-top: 20px; border-radius: 10px;">
-              ${qrSvg}
+      try {
+        const resend = new Resend((env as any).RESEND_API_KEY);
+        const { data, error } = await resend.emails.send({
+          from: '808 Fest <tickets@el808fest.com>', // MUST BE A VERIFIED DOMAIN IN RESEND!
+          to: email,
+          subject: 'Tu ticket para 808 Fest',
+          html: `
+            <div style="font-family: monospace; background-color: #000; color: #fff; padding: 40px; text-align: center;">
+              <h1 style="color: #39FF14; text-transform: uppercase;">808 FEST</h1>
+              <h2>HOLA ${fullName.toUpperCase()}, AQUÍ ESTÁ TU TICKET</h2>
+              <p>Muestra este código QR en la entrada del evento.</p>
+              <div style="background: white; padding: 20px; display: inline-block; margin-top: 20px; border-radius: 10px;">
+                ${qrSvg}
+              </div>
+              <p style="margin-top: 40px; opacity: 0.7; font-size: 12px;">Token: ${token}</p>
             </div>
-            <p style="margin-top: 40px; opacity: 0.7; font-size: 12px;">Token: ${token}</p>
-          </div>
-        `
-      });
+          `
+        });
+        
+        if (error) {
+          console.error("Resend API Error:", error);
+        } else {
+          console.log("Resend success:", data);
+        }
+      } catch (emailErr) {
+        console.error("Error connecting to Resend:", emailErr);
+      }
+    } else {
+      console.warn("RESEND_API_KEY no está configurada. El correo no se enviará.");
     }
 
     return new Response(JSON.stringify({ success: true, token, qrSvg }), { status: 200 });
