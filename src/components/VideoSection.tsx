@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function VideoSection() {
+export default function VideoSection({ video = "/video/video.avif" }: { video?: string }) {
   const text = "808FEST — EL MEJOR EVENTO DEL AÑO — ";
 
   const MarqueeRow = ({ reverse = false }: { reverse?: boolean }) => (
@@ -18,6 +18,8 @@ export default function VideoSection() {
     </div>
   );
 
+  const isVideo = video?.match(/\.(mp4|webm|ogg)$/i);
+
   return (
     <section className="relative w-full h-screen bg-[#22003D] flex flex-col justify-between overflow-hidden select-none">
       
@@ -31,11 +33,22 @@ export default function VideoSection() {
 
       {/* Center Square Video (On top of everything) */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] md:w-[35vw] aspect-square z-20 shadow-[0_30px_60px_rgba(0,0,0,0.8)] group cursor-pointer overflow-hidden bg-black border border-white/5">
-        <img 
-          src="/video/video.avif" 
-          alt="Video Highlight" 
-          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
-        />
+        {isVideo ? (
+          <video 
+            src={video} 
+            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
+        ) : (
+          <img 
+            src={video} 
+            alt="Video Highlight" 
+            className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
+          />
+        )}
         {/* Play Button Overlay */}
         <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
           <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl scale-50 group-hover:scale-100 transition-transform duration-500 delay-100">

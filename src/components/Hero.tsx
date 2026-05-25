@@ -2,13 +2,17 @@ import React, { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { Button } from "./ui/button";
 
-export default function Hero() {
+export default function Hero({
+  video = "/video/video.avif",
+}: {
+  video?: string;
+}) {
   const introRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
   const [introFinished, setIntroFinished] = useState(false);
 
-  const introTexts = ["808", "ENMED", "el mejor evento del año", "trapperia"];
+  const introTexts = ["808 Fest"];
 
   useEffect(() => {
     const tl = gsap.timeline({
@@ -61,6 +65,8 @@ export default function Hero() {
     );
   }, []);
 
+  const isVideo = video?.match(/\.(mp4|webm|ogg)$/i);
+
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-black font-sans text-white">
       {/* Intro Overlay */}
@@ -78,11 +84,22 @@ export default function Hero() {
 
       {/* Background Video/Image Placeholder */}
       <div className="absolute inset-0 z-0 h-full w-full">
-        <img
-          src="/video/video.avif"
-          alt="Background Preview"
-          className="h-full w-full object-cover opacity-80 mix-blend-screen"
-        />
+        {isVideo ? (
+          <video
+            src={video}
+            className="h-full w-full object-cover opacity-80 mix-blend-screen"
+            autoPlay
+            muted
+            loop
+            playsInline
+          />
+        ) : (
+          <img
+            src={video}
+            alt="Background Preview"
+            className="h-full w-full object-cover opacity-80 mix-blend-screen"
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 via-transparent to-black/90 animate-gradient"></div>
       </div>
 

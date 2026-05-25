@@ -9,6 +9,7 @@ import MapSection from '../components/MapSection';
 import TeamSection from '../components/TeamSection';
 import Footer from '../components/Footer';
 import { getCollection } from 'astro:content';
+import settings from '../content/settings.json';
 
 const artistsEntries = await getCollection('artists');
 const artistsData = artistsEntries.map((entry: any) => entry.data);
@@ -21,11 +22,11 @@ const teamData = teamEntries.map((entry: any) => entry.data);
 ---
 
 <Layout>
-  <Hero client:load />
+  <Hero client:load video={settings.heroVideo} />
   <div id="delayed-content" class="hidden">
     <Marquee />
     <ArtistsSection client:load artists={artistsData} />
-    <VideoSection client:load />
+    <VideoSection client:load video={settings.sectionVideo} />
     <GridSection posts={caosData} />
     <MapSection />
     <TeamSection client:load team={teamData} />

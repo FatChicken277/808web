@@ -10,6 +10,12 @@ content:
       - name: siteName
         label: Site Name
         type: string
+      - name: heroVideo
+        label: Hero Video (o Imagen)
+        type: image
+      - name: sectionVideo
+        label: Video de la Sección (o Imagen)
+        type: image
   - name: artists
     label: Artists
     type: collection
@@ -25,9 +31,6 @@ content:
       - name: image
         label: Image
         type: image
-      - name: body
-        label: Bio
-        type: rich-text
   - name: caos
     label: Seccion Caos (Mini Posts)
     type: collection
@@ -72,9 +75,6 @@ content:
     type: collection
     path: src/content/team
     fields:
-      - name: title
-        label: Nombre del Archivo (Interno)
-        type: string
       - name: name
         label: Nombre Completo
         type: string
