@@ -12,10 +12,10 @@ content:
         type: string
       - name: heroVideo
         label: Hero Video (o Imagen)
-        type: image
+        type: file
       - name: sectionVideo
         label: Video de la Sección (o Imagen)
-        type: image
+        type: file
   - name: artists
     label: Artists
     type: collection
