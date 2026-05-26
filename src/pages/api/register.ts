@@ -51,15 +51,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
       qr_token: token,
     });
 
-    // Generate QR
+    // Generate QR for frontend SVG
     const qrUrl = `https://el808fest.com/ticket/${token}`;
     const qr = qrcode(0, "H");
     qr.addData(qrUrl);
     qr.make();
-
-    // Generate base64 GIF data for CID
-    const qrDataUrl = qr.createDataURL(6, 2);
-    const qrBase64 = qrDataUrl.split(",")[1];
 
     // SVG for frontend only
     let qrSvg = qr.createSvgTag(4, 2);
@@ -91,7 +87,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
               <h2>HOLA ${safeName.toUpperCase()}, AQUÍ ESTÁ TU TICKET</h2>
               <p>Muestra este código QR en la entrada del evento.</p>
               <div style="background: white; padding: 20px; display: inline-block; margin-top: 20px; border-radius: 10px;">
-                <img src="cid:ticketqr" alt="Ticket QR" width="220" height="220" style="display: block; border: 0; outline: none; text-decoration: none;" />
+                <img src="https://el808fest.com/api/qr/${token}" alt="Ticket QR" width="220" height="220" style="display: block; border: 0; outline: none; text-decoration: none;" />
               </div>
               <p style="margin-top: 40px; opacity: 0.7; font-size: 12px;">Token: ${token}</p>
               <p style="margin-top: 20px;">
@@ -100,18 +96,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
               </p>
             </div>
           `,
-          attachments: [
-            {
-              filename: "ticket.gif",
-              content: Uint8Array.from(atob(qrBase64), (c) =>
-                c.charCodeAt(0),
-              ) as any,
-              contentType: "image/gif",
-              // @ts-ignore
-              cid: "ticketqr",
-              disposition: "inline",
-            },
-          ],
         });
 
         if (error) {
