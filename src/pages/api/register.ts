@@ -11,7 +11,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const db = getDb((env as any) || process.env);
     const body = await request.json();
-    const { fullName, cedula, phone, email } = body;
+    let { fullName, cedula, phone, email } = body;
 
     if (!fullName || !cedula || !phone || !email) {
       return new Response(
@@ -19,6 +19,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
         { status: 400 },
       );
     }
+
+    // Normalize data
+    email = email.trim().toLowerCase();
+    cedula = cedula.trim();
+    fullName = fullName.trim();
 
     // Check for duplicates
     const existing = await db
@@ -48,14 +53,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Generate QR
     const qrUrl = `https://el808fest.com/ticket/${token}`;
-    const qr = qrcode(0, "M");
+    const qr = qrcode(0, "H");
     qr.addData(qrUrl);
     qr.make();
-    
+
     // Generate base64 GIF data for CID
     const qrDataUrl = qr.createDataURL(6, 2);
     const qrBase64 = qrDataUrl.split(",")[1];
-    
+
     // SVG for frontend only
     let qrSvg = qr.createSvgTag(4, 2);
     const match = qrSvg.match(/width="(\d+)(px)?" height="(\d+)(px)?"/);
@@ -69,6 +74,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Send Email
     if ((env as any).RESEND_API_KEY) {
       try {
+        // Escape name for HTML
+        const safeName = fullName
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+
         const resend = new Resend((env as any).RESEND_API_KEY);
         const { data, error } = await resend.emails.send({
           from: "808 Fest <tickets@el808fest.com>", // MUST BE A VERIFIED DOMAIN IN RESEND!
@@ -77,10 +88,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
           html: `
             <div style="font-family: monospace; background-color: #000; color: #fff; padding: 40px; text-align: center;">
               <h1 style="color: #39FF14; text-transform: uppercase;">808 FEST</h1>
-              <h2>HOLA ${fullName.toUpperCase()}, AQUÍ ESTÁ TU TICKET</h2>
+              <h2>HOLA ${safeName.toUpperCase()}, AQUÍ ESTÁ TU TICKET</h2>
               <p>Muestra este código QR en la entrada del evento.</p>
               <div style="background: white; padding: 20px; display: inline-block; margin-top: 20px; border-radius: 10px;">
-                <img src="cid:ticketqr" alt="Ticket QR" style="display: block; width: 200px; height: 200px;" />
+                <img src="cid:ticketqr" alt="Ticket QR" width="220" height="220" style="display: block; border: 0; outline: none; text-decoration: none;" />
               </div>
               <p style="margin-top: 40px; opacity: 0.7; font-size: 12px;">Token: ${token}</p>
               <p style="margin-top: 20px;">
@@ -92,10 +103,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
           attachments: [
             {
               filename: "ticket.gif",
-              content: qrBase64,
+              content: Uint8Array.from(atob(qrBase64), (c) =>
+                c.charCodeAt(0),
+              ) as any,
               contentType: "image/gif",
-              // @ts-ignore - The types in some resend versions might lack cid, but API supports it
+              // @ts-ignore
               cid: "ticketqr",
+              disposition: "inline",
             },
           ],
         });
