@@ -1,6 +1,6 @@
 ---
 name: El Dictador
-role: Admin
+role: El Admin
 instagram: thekingdavidms
 image: /images/king.jpeg
 ---
