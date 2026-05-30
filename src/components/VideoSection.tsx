@@ -55,7 +55,7 @@ export default function VideoSection({
       </div>
 
       {/* Center Square Video (On top of everything) */}
-      <div 
+      <div
         onClick={() => isVideo && setIsModalOpen(true)}
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70vw] md:w-[35vw] aspect-square z-20 shadow-[0_30px_60px_rgba(0,0,0,0.8)] group cursor-pointer overflow-hidden bg-black border border-white/5"
       >
@@ -88,29 +88,32 @@ export default function VideoSection({
       </div>
 
       {/* Video Modal Popup rendered via Portal to avoid CSS transform issues */}
-      {isModalOpen && isVideo && typeof document !== "undefined" && createPortal(
-        <div 
-          className="fixed inset-0 z-[9999999] bg-black/95 flex items-center justify-center p-4 md:p-10 backdrop-blur-xl animate-in fade-in duration-300"
-          data-native-cursor="true"
-        >
-          <button 
-            onClick={() => setIsModalOpen(false)}
-            className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors z-50 bg-black/50 p-2 rounded-full backdrop-blur-md cursor-pointer"
+      {isModalOpen &&
+        isVideo &&
+        typeof document !== "undefined" &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-9999999 bg-black/95 flex items-center justify-center p-4 md:p-10 backdrop-blur-xl animate-in fade-in duration-300"
+            data-native-cursor="true"
           >
-            <X size={32} />
-          </button>
-          <div className="relative w-full max-w-6xl aspect-video bg-black rounded-lg overflow-hidden shadow-[0_0_50px_rgba(147,51,234,0.3)] animate-in zoom-in-95 duration-500">
-            <video
-              src={video}
-              className="w-full h-full object-contain"
-              controls
-              autoPlay
-              playsInline
-            />
-          </div>
-        </div>,
-        document.body
-      )}
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-6 right-6 text-white/60 hover:text-white transition-colors z-50 bg-black/50 p-2 rounded-full backdrop-blur-md cursor-pointer"
+            >
+              <X size={32} />
+            </button>
+            <div className="relative w-full max-w-6xl aspect-video bg-black rounded-lg overflow-hidden shadow-[0_0_50px_rgba(147,51,234,0.3)] animate-in zoom-in-95 duration-500">
+              <video
+                src={video}
+                className="w-full h-full object-contain"
+                controls
+                autoPlay
+                playsInline
+              />
+            </div>
+          </div>,
+          document.body,
+        )}
     </section>
   );
 }
