@@ -45,7 +45,7 @@ export default function VideoSection({
   const isVideo = video?.match(/\.(mp4|webm|ogg)$/i);
 
   return (
-    <section className="relative w-full h-[60vh] md:h-screen bg-[#22003D] flex flex-col justify-between overflow-hidden select-none">
+    <section id="video" className="relative w-full h-[60vh] md:h-screen bg-[#22003D] flex flex-col justify-between overflow-hidden select-none">
       {/* 4 Lines of Marquee */}
       <div className="absolute inset-0 z-0 flex flex-col justify-center">
         <MarqueeRow />

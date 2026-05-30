@@ -111,8 +111,8 @@ export default function Hero({
           </header>
 
           {/* Hero Body */}
-          <div className="flex flex-1 flex-col items-center md:items-end justify-center md:justify-start md:pt-20">
-            <div className="flex w-full sm:w-60 flex-col items-center space-y-4">
+          <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
+            <div className="flex w-full max-w-[280px] sm:max-w-[340px] flex-col items-center space-y-4 pointer-events-auto px-6 mt-12 md:mt-0">
               {/* Event Logo Area */}
               <div className="relative w-full flex items-center justify-center">
                 <img
@@ -123,23 +123,24 @@ export default function Hero({
               </div>
 
               {/* Action Box */}
-              <div className="w-full bg-white text-black text-xs font-bold uppercase tracking-widest mt-5 flex flex-col">
+              <div className="w-full flex flex-col gap-3 mt-8">
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="block w-full text-center py-3 border-b border-black hover:bg-[#39FF14] transition-colors cursor-pointer"
+                  className="relative group w-full overflow-hidden bg-[#39FF14] text-black text-sm md:text-base font-black uppercase tracking-widest py-3 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.3)] hover:shadow-[0_0_25px_rgba(57,255,20,0.6)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
                 >
-                  OBTENER TICKETS
+                  <span className="relative z-10 group-hover:text-black transition-colors duration-300">OBTENER TICKETS</span>
+                  <div className="absolute inset-0 bg-white scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></div>
                 </button>
-                <div className="flex w-full">
+                <div className="flex w-full gap-3">
                   <a
                     href="#artistas"
-                    className="flex-1 text-center py-3 border-r border-black hover:bg-gray-200 transition-colors"
+                    className="flex-1 text-center py-3 bg-white/5 backdrop-blur-md text-white text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-lg border border-white/20 hover:bg-white/10 hover:border-[#9333ea] hover:-translate-y-1 shadow-lg transition-all duration-300"
                   >
                     ARTISTAS
                   </a>
                   <a
-                    href="#about"
-                    className="flex-1 text-center py-3 hover:bg-gray-200 transition-colors"
+                    href="#video"
+                    className="flex-1 text-center py-3 bg-white/5 backdrop-blur-md text-white text-[10px] md:text-xs font-bold uppercase tracking-widest rounded-lg border border-white/20 hover:bg-white/10 hover:border-[#9333ea] hover:-translate-y-1 shadow-lg transition-all duration-300"
                   >
                     SABER MÁS
                   </a>
