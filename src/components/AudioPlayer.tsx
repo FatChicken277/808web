@@ -20,13 +20,13 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const crossfadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Usamos una referencia para el estado interno y evitar los "stale closures" (variables viejas en setTimeout)
   const stateRef = useRef({
     playlist: [] as string[],
     currentIndex: 0,
     activePlayer: 1 as 1 | 2,
     userPaused: false,
     hasInteracted: false,
+    systemPaused: false
   });
 
   // Prevenir scroll mientras está la pantalla de inicio
@@ -184,6 +184,7 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
       const state = stateRef.current;
       if (
         state.userPaused ||
+        state.systemPaused ||
         isPlaying ||
         state.hasInteracted ||
         state.playlist.length === 0
@@ -205,6 +206,45 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
       window.removeEventListener("touchstart", handleInteraction);
     };
   }, [isPlaying, startPlayback]);
+
+  // Manejador para Pausa de Sistema (cuando se abre un modal de video)
+  useEffect(() => {
+    const handleSystemPause = () => {
+      const state = stateRef.current;
+      const activeAudio = state.activePlayer === 1 ? audioRef1.current : audioRef2.current;
+      if (activeAudio && isPlaying) {
+        activeAudio.pause();
+        setIsPlaying(false);
+        state.systemPaused = true;
+        if (timerRef.current) clearTimeout(timerRef.current);
+        if (crossfadeIntervalRef.current) clearInterval(crossfadeIntervalRef.current);
+      }
+    };
+
+    const handleSystemResume = () => {
+      const state = stateRef.current;
+      if (state.systemPaused && !state.userPaused) {
+        state.systemPaused = false;
+        const activeAudio = state.activePlayer === 1 ? audioRef1.current : audioRef2.current;
+        if (activeAudio) {
+          activeAudio.play().then(() => {
+            setIsPlaying(true);
+            activeAudio.volume = 0.5;
+            if (timerRef.current) clearTimeout(timerRef.current);
+            timerRef.current = setTimeout(crossfadeToNext, 8000);
+          }).catch(e => console.log(e));
+        }
+      }
+    };
+
+    window.addEventListener('system-audio-pause', handleSystemPause);
+    window.addEventListener('system-audio-resume', handleSystemResume);
+
+    return () => {
+      window.removeEventListener('system-audio-pause', handleSystemPause);
+      window.removeEventListener('system-audio-resume', handleSystemResume);
+    };
+  }, [isPlaying, crossfadeToNext]);
 
   const togglePlay = () => {
     const state = stateRef.current;
@@ -246,7 +286,7 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
   const handleEnterSite = () => {
     setSiteEntered(true);
     const state = stateRef.current;
-    if (!isPlaying && state.playlist.length > 0) {
+    if (!isPlaying && state.playlist.length > 0 && !state.systemPaused) {
       state.hasInteracted = true;
       startPlayback();
     }
