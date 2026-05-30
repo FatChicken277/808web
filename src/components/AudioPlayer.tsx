@@ -182,6 +182,21 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
   useEffect(() => {
     const handleInteraction = () => {
       const state = stateRef.current;
+      
+      // Unlock audio para iOS Safari
+      if (!state.hasInteracted) {
+        if (audioRef1.current) {
+          audioRef1.current.volume = 0;
+          audioRef1.current.play().catch(() => {});
+          audioRef1.current.pause();
+        }
+        if (audioRef2.current) {
+          audioRef2.current.volume = 0;
+          audioRef2.current.play().catch(() => {});
+          audioRef2.current.pause();
+        }
+      }
+
       if (
         state.userPaused ||
         state.systemPaused ||
@@ -286,6 +301,21 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
   const handleEnterSite = () => {
     setSiteEntered(true);
     const state = stateRef.current;
+    
+    // Unlock audio para iOS Safari
+    if (!state.hasInteracted) {
+      if (audioRef1.current) {
+        audioRef1.current.volume = 0;
+        audioRef1.current.play().catch(() => {});
+        audioRef1.current.pause();
+      }
+      if (audioRef2.current) {
+        audioRef2.current.volume = 0;
+        audioRef2.current.play().catch(() => {});
+        audioRef2.current.pause();
+      }
+    }
+
     if (!isPlaying && state.playlist.length > 0 && !state.systemPaused) {
       state.hasInteracted = true;
       startPlayback();
