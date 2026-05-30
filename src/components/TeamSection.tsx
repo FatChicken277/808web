@@ -42,7 +42,7 @@ export default function TeamSection({ team = [] }: { team?: any[] }) {
   };
 
   return (
-    <section className="w-full bg-linear-to-b from-[#1a0b2e] to-black text-white py-12 overflow-hidden border-t border-white/10">
+    <section id="equipo" className="w-full bg-linear-to-b from-[#1a0b2e] to-black text-white py-12 overflow-hidden border-t border-white/10">
       {/* Header */}
       <div className="flex items-center justify-between mb-8 px-6 md:px-12">
         <div className="flex items-baseline gap-4">

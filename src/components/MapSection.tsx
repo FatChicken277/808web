@@ -2,7 +2,7 @@ import React from "react";
 
 export default function MapSection() {
   return (
-    <section className="w-full flex flex-col md:flex-row bg-gradient-to-b from-black to-[#1a0b2e] text-white h-[100vh] border-t border-black">
+    <section id="ubicacion" className="w-full flex flex-col md:flex-row bg-gradient-to-b from-black to-[#1a0b2e] text-white h-[100vh] border-t border-black">
       {/* Left Content */}
       <div className="w-full md:w-1/2 p-6 md:p-12 lg:p-16 flex flex-col justify-start">
         <h2 className="text-3xl md:text-4xl font-bold tracking-tighter mb-2">

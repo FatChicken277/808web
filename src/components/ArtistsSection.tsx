@@ -45,7 +45,7 @@ export default function ArtistsSection({ artists = [] }: { artists?: any[] }) {
   };
 
   return (
-    <section className="w-full bg-linear-to-bl from-[#4a126b] via-black via-50% to-[#0f5c24] text-white py-12 overflow-hidden border-t border-white/10">
+    <section id="artistas" className="w-full bg-linear-to-bl from-[#4a126b] via-black via-50% to-[#0f5c24] text-white py-12 overflow-hidden border-t border-white/10">
       {/* Header */}
       <div className="flex items-center justify-between mb-8 px-6 md:px-12">
         <div className="flex items-baseline gap-4">

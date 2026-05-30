@@ -120,7 +120,7 @@ export default function GridSection({ posts = [] }: { posts?: any[] }) {
   ];
 
   return (
-    <section className="w-full bg-black text-white">
+    <section id="caos" className="w-full bg-black text-white">
       <div className="grid grid-cols-1 md:grid-cols-6 auto-rows-[45vh]">
         {displayPosts.map((post: any, idx: number) => {
           let colSpan = "md:col-span-2"; // default for width="3"

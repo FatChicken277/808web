@@ -51,9 +51,9 @@ export default function Hero({
           className="relative z-10 flex h-full min-h-screen flex-col px-6 py-6 md:px-12 md:py-8 justify-between"
         >
           {/* Header */}
-          <header className="flex w-full items-start justify-between mix-blend-difference text-white">
+          <header className="flex flex-col md:flex-row w-full items-start md:items-start justify-between mix-blend-difference text-white gap-6">
             {/* Left: Logos */}
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 shrink-0">
               <img
                 src="/logos/logos.png"
                 alt="808 Logos"
@@ -62,40 +62,40 @@ export default function Hero({
             </div>
 
             {/* Right: Navbar & Contact */}
-            <div className="flex flex-col items-end gap-4">
-              <nav className="flex gap-4 text-sm font-bold tracking-widest uppercase">
+            <div className="flex flex-col items-start md:items-end gap-4 w-full md:w-auto">
+              <nav className="flex flex-wrap gap-4 text-xs md:text-sm font-bold tracking-widest uppercase">
                 <a
-                  href="#showcase"
+                  href="#caos"
                   className="hover:text-gray-300 transition-colors"
                 >
                   Galería.
                 </a>
                 <a
-                  href="#index"
+                  href="#artistas"
                   className="hover:text-gray-300 transition-colors"
                 >
-                  Inicio.
+                  Artistas.
                 </a>
                 <a
-                  href="#studio"
+                  href="#equipo"
                   className="hover:text-gray-300 transition-colors"
                 >
-                  Estudio.
+                  Equipo.
                 </a>
                 <a
-                  href="#contact"
+                  href="#ubicacion"
                   className="hover:text-gray-300 transition-colors"
                 >
-                  Contacto.
+                  Ubicación.
                 </a>
               </nav>
 
               <div className="flex items-center gap-4 text-xs font-bold tracking-widest uppercase">
                 <a
-                  href="mailto:studio@fluoro.london"
+                  href="https://el808fest.com"
                   className="hover:text-gray-300 transition-colors flex items-center gap-2"
                 >
-                  <span>➔</span> STUDIO@FLUORO.LONDON
+                  <span>➔</span> EL808FEST.COM
                 </a>
                 <a
                   href="#instagram"
