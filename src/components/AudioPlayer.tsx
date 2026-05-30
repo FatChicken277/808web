@@ -20,6 +20,10 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const crossfadeIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  const audioCtxRef = useRef<AudioContext | any>(null);
+  const gainNode1Ref = useRef<GainNode | any>(null);
+  const gainNode2Ref = useRef<GainNode | any>(null);
+
   const stateRef = useRef({
     playlist: [] as string[],
     currentIndex: 0,
@@ -56,10 +60,13 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
     const state = stateRef.current;
     if (state.playlist.length === 0) return;
 
-    const activeAudio =
-      state.activePlayer === 1 ? audioRef1.current : audioRef2.current;
-    const nextAudio =
-      state.activePlayer === 1 ? audioRef2.current : audioRef1.current;
+    const activePlayer = state.activePlayer;
+    const nextPlayer = activePlayer === 1 ? 2 : 1;
+
+    const activeAudio = activePlayer === 1 ? audioRef1.current : audioRef2.current;
+    const nextAudio = activePlayer === 1 ? audioRef2.current : audioRef1.current;
+    const activeGain = activePlayer === 1 ? gainNode1Ref.current : gainNode2Ref.current;
+    const nextGain = activePlayer === 1 ? gainNode2Ref.current : gainNode1Ref.current;
 
     if (!activeAudio || !nextAudio) return;
 
@@ -81,6 +88,7 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
 
     nextAudio.src = nextPlaylist[nextIndex];
     nextAudio.volume = 0;
+    if (nextGain) nextGain.gain.value = 0;
 
     nextAudio.onloadedmetadata = () => {
       const duration = nextAudio.duration;
@@ -107,8 +115,10 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
               if (crossfadeIntervalRef.current)
                 clearInterval(crossfadeIntervalRef.current);
               nextAudio.volume = 0.15;
+              if (nextGain) nextGain.gain.value = 0.15;
               activeAudio.pause();
               activeAudio.volume = 0;
+              if (activeGain) activeGain.gain.value = 0;
 
               // Actualizar estado para la próxima ronda
               state.activePlayer = state.activePlayer === 1 ? 2 : 1;
@@ -119,8 +129,11 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
               timerRef.current = setTimeout(crossfadeToNext, 8000);
             } else {
               nextAudio.volume = vol;
+              if (nextGain) nextGain.gain.value = vol;
               // Desvanecer el activo un poco más rápido para evitar un pico de volumen alto
-              activeAudio.volume = Math.max(0, 0.15 - vol * 1.5);
+              const activeVol = Math.max(0, 0.15 - vol * 1.5);
+              activeAudio.volume = activeVol;
+              if (activeGain) activeGain.gain.value = activeVol;
             }
           }, 100);
         })
@@ -134,12 +147,14 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
     const state = stateRef.current;
     if (state.playlist.length === 0) return;
 
-    const activeAudio =
-      state.activePlayer === 1 ? audioRef1.current : audioRef2.current;
+    const activePlayer = state.activePlayer;
+    const activeAudio = activePlayer === 1 ? audioRef1.current : audioRef2.current;
+    const activeGain = activePlayer === 1 ? gainNode1Ref.current : gainNode2Ref.current;
     if (!activeAudio) return;
 
     activeAudio.src = state.playlist[state.currentIndex];
     activeAudio.volume = 0;
+    if (activeGain) activeGain.gain.value = 0;
 
     activeAudio.onloadedmetadata = () => {
       const duration = activeAudio.duration;
@@ -162,10 +177,12 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
             vol += 0.015;
             if (vol >= 0.15) {
               activeAudio.volume = 0.15;
+              if (activeGain) activeGain.gain.value = 0.15;
               if (crossfadeIntervalRef.current)
                 clearInterval(crossfadeIntervalRef.current);
             } else {
               activeAudio.volume = vol;
+              if (activeGain) activeGain.gain.value = vol;
             }
           }, 100);
 
@@ -241,10 +258,12 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
       if (state.systemPaused && !state.userPaused) {
         state.systemPaused = false;
         const activeAudio = state.activePlayer === 1 ? audioRef1.current : audioRef2.current;
+        const activeGain = state.activePlayer === 1 ? gainNode1Ref.current : gainNode2Ref.current;
         if (activeAudio) {
           activeAudio.play().then(() => {
             setIsPlaying(true);
             activeAudio.volume = 0.15;
+            if (activeGain) activeGain.gain.value = 0.15;
             if (timerRef.current) clearTimeout(timerRef.current);
             timerRef.current = setTimeout(crossfadeToNext, 8000);
           }).catch(e => console.log(e));
@@ -263,8 +282,8 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
 
   const togglePlay = () => {
     const state = stateRef.current;
-    const activeAudio =
-      state.activePlayer === 1 ? audioRef1.current : audioRef2.current;
+    const activeAudio = state.activePlayer === 1 ? audioRef1.current : audioRef2.current;
+    const activeGain = state.activePlayer === 1 ? gainNode1Ref.current : gainNode2Ref.current;
     if (!activeAudio) return;
 
     if (isPlaying) {
@@ -283,6 +302,7 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
         .then(() => {
           setIsPlaying(true);
           activeAudio.volume = 0.15;
+          if (activeGain) activeGain.gain.value = 0.15;
           if (timerRef.current) clearTimeout(timerRef.current);
           timerRef.current = setTimeout(crossfadeToNext, 8000);
         })
@@ -302,6 +322,35 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
     setSiteEntered(true);
     const state = stateRef.current;
     
+    // Init Web Audio API para iOS
+    if (!audioCtxRef.current) {
+      try {
+        const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
+        if (AudioContextClass) {
+          const ctx = new AudioContextClass();
+          audioCtxRef.current = ctx;
+
+          if (audioRef1.current && !gainNode1Ref.current) {
+            const track1 = ctx.createMediaElementSource(audioRef1.current);
+            const gain1 = ctx.createGain();
+            gain1.gain.value = 0;
+            track1.connect(gain1).connect(ctx.destination);
+            gainNode1Ref.current = gain1;
+          }
+          if (audioRef2.current && !gainNode2Ref.current) {
+            const track2 = ctx.createMediaElementSource(audioRef2.current);
+            const gain2 = ctx.createGain();
+            gain2.gain.value = 0;
+            track2.connect(gain2).connect(ctx.destination);
+            gainNode2Ref.current = gain2;
+          }
+          ctx.resume();
+        }
+      } catch (e) {
+        console.warn("Web Audio API no soportada o falló:", e);
+      }
+    }
+
     // Unlock audio para iOS Safari
     if (!state.hasInteracted) {
       if (audioRef1.current) {
