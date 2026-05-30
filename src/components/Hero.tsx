@@ -98,7 +98,9 @@ export default function Hero({
                   <span>➔</span> EL808FEST.COM
                 </a>
                 <a
-                  href="#instagram"
+                  href="https://www.instagram.com/808festoficial/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="border border-white rounded-full px-3 py-1 hover:bg-white hover:text-black transition-colors"
                 >
                   Instagram
