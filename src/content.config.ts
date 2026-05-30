@@ -7,6 +7,7 @@ const artistsCollection = defineCollection({
     name: z.string(),
     instagram: z.string().optional(),
     image: z.string().optional(),
+    order: z.number().optional(),
   }),
 });
 
@@ -29,6 +30,7 @@ const teamCollection = defineCollection({
     role: z.string().optional(),
     instagram: z.string().optional(),
     image: z.string().optional(),
+    order: z.number().optional(),
   }),
 });
 

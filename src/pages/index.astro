@@ -12,18 +12,18 @@ import { getCollection } from 'astro:content';
 import settings from '../content/settings.json';
 
 const artistsEntries = await getCollection('artists');
-const artistsData = artistsEntries.map((entry: any) => entry.data);
+const artistsData = artistsEntries.map((entry: any) => entry.data).sort((a: any, b: any) => (a.order ?? 999) - (b.order ?? 999));
 
 const caosEntries = await getCollection('caos');
 const caosData = caosEntries.map((entry: any) => entry.data);
 
 const teamEntries = await getCollection('team');
-const teamData = teamEntries.map((entry: any) => entry.data);
+const teamData = teamEntries.map((entry: any) => entry.data).sort((a: any, b: any) => (a.order ?? 999) - (b.order ?? 999));
 ---
 
 <Layout>
   <Hero client:only="react" video={settings.heroVideo} />
-  <div id="delayed-content" class="hidden">
+  <div id="delayed-content">
     <Marquee />
     <ArtistsSection client:only="react" artists={artistsData} />
     <VideoSection client:only="react" video={settings.sectionVideo} />

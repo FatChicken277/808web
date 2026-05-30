@@ -7,62 +7,15 @@ export default function Hero({
 }: {
   video?: string;
 }) {
-  const introRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
   const mainRef = useRef<HTMLDivElement>(null);
-  const [introFinished, setIntroFinished] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const introTexts = ["808 Fest"];
-
   useEffect(() => {
-    const tl = gsap.timeline({
-      onComplete: () => {
-        setIntroFinished(true);
-      },
-    });
-
-    // Animate text changes faster
-    introTexts.forEach((text, index) => {
-      tl.to(textRef.current, {
-        duration: 0,
-        textContent: text,
-      })
-        .fromTo(
-          textRef.current,
-          { opacity: 0, scale: 0.8 },
-          { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" },
-        )
-        .to(textRef.current, {
-          opacity: 0,
-          scale: 1.1,
-          duration: 0.2,
-          ease: "power2.in",
-          delay: 0.25,
-        });
-    });
-
-    // Reveal the rest of the page BEFORE the black screen fades out.
-    // This forces the scrollbar to appear while the screen is still black,
-    // so when the layout fades in, it's already perfectly positioned with no jumps.
-    tl.call(() => {
-      const delayedContent = document.getElementById("delayed-content");
-      if (delayedContent) delayedContent.classList.remove("hidden");
-    });
-
-    // Fade out black screen
-    tl.to(introRef.current, {
-      opacity: 0,
-      duration: 0.8,
-      ease: "power2.inOut",
-    });
-
-    // Animate main content in
-    tl.fromTo(
+    // Just animate main content in without any intro
+    gsap.fromTo(
       mainRef.current,
       { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" },
-      "-=0.4",
+      { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }
     );
   }, []);
 
@@ -71,18 +24,6 @@ export default function Hero({
   return (
     <>
       <div className="relative min-h-screen w-full overflow-hidden bg-black font-sans text-white">
-        {/* Intro Overlay */}
-        <div
-          ref={introRef}
-          className={`fixed inset-0 z-50 flex items-center justify-center bg-black ${
-            introFinished ? "pointer-events-none" : ""
-          }`}
-        >
-          <div
-            ref={textRef}
-            className="text-4xl md:text-7xl font-bold tracking-widest text-white uppercase text-center"
-          ></div>
-        </div>
 
         {/* Background Video/Image Placeholder */}
         <div className="absolute inset-0 z-0 h-full w-full">

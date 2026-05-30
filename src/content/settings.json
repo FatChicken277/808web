@@ -1,5 +1,17 @@
 {
   "siteName": "808 FEST",
   "heroVideo": "/images/test.webm",
-  "sectionVideo": "/images/808-2.avif"
+  "sectionVideo": "/images/808-2.avif",
+  "playlist": [
+    "/audio/aychuchi.mp3",
+    "/audio/chapeta.mp3",
+    "/audio/esceptico.mp3",
+    "/audio/kmalaksos.mp3",
+    "/audio/modelito.mp3",
+    "/audio/nopesan.mp3",
+    "/audio/tct.mp3",
+    "/audio/tquieroconmigo.mp3",
+    "/audio/nequi.mp3",
+    "/audio/comomepones.mp3"
+  ]
 }

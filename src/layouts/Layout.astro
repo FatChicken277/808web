@@ -1,5 +1,7 @@
 ---
 import "../styles/global.css";
+import AudioPlayer from "../components/AudioPlayer";
+import settings from "../content/settings.json";
 ---
 
 <!doctype html>
@@ -23,6 +25,9 @@ import "../styles/global.css";
 
     <!-- Custom Cursor -->
     <div id="custom-cursor"></div>
+
+    <!-- Audio Player -->
+    <AudioPlayer client:only="react" tracks={settings.playlist} />
 
     <script>
       const cursor = document.getElementById("custom-cursor");
