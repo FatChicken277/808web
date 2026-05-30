@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import TicketModal from "./TicketModal";
+import { ChevronDown } from "lucide-react";
 
 export default function Hero({
   video = "/video/video.avif",
@@ -62,8 +63,8 @@ export default function Hero({
             </div>
 
             {/* Right: Navbar & Contact */}
-            <div className="flex flex-col items-start md:items-end gap-4 w-full md:w-auto">
-              <nav className="flex flex-wrap gap-4 text-xs md:text-sm font-bold tracking-widest uppercase">
+            <div className="flex flex-col items-center md:items-end gap-4 w-full md:w-auto">
+              <nav className="flex flex-wrap justify-center gap-4 text-xs md:text-sm font-bold tracking-widest uppercase">
                 <a
                   href="#caos"
                   className="hover:text-gray-300 transition-colors"
@@ -154,6 +155,11 @@ export default function Hero({
               alt="808 Logos"
               className="h-6 w-auto object-contain opacity-80"
             />
+          </div>
+
+          {/* Scroll Indicator */}
+          <div className="absolute bottom-28 md:bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center justify-center opacity-60 animate-bounce mix-blend-difference pointer-events-none">
+            <ChevronDown size={28} />
           </div>
         </div>
       </div>

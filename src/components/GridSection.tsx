@@ -120,8 +120,21 @@ export default function GridSection({ posts = [] }: { posts?: any[] }) {
   ];
 
   return (
-    <section id="caos" className="w-full bg-black text-white">
-      <div className="grid grid-cols-1 md:grid-cols-6 auto-rows-[30vh] md:auto-rows-[45vh]">
+    <section id="caos" className="w-full bg-black text-white pt-12 border-t border-white/10">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8 px-6 md:px-12">
+        <div className="flex items-baseline gap-4">
+          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter">
+            [galería]
+          </h2>
+          <span className="text-[10px] font-mono uppercase tracking-widest opacity-60 hidden sm:inline">
+            Galería visual
+          </span>
+        </div>
+      </div>
+
+      <div className="px-6 md:px-12 pb-24 lg:pb-12 pt-8">
+        <div className="grid grid-cols-1 md:grid-cols-6 auto-rows-[30vh] md:auto-rows-[45vh] gap-4">
         {displayPosts.map((post: any, idx: number) => {
           let colSpan = "md:col-span-2"; // default for width="3"
           if (post.width === "1") colSpan = "md:col-span-6";
@@ -161,6 +174,7 @@ export default function GridSection({ posts = [] }: { posts?: any[] }) {
             </div>
           );
         })}
+        </div>
       </div>
     </section>
   );
