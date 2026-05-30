@@ -27,7 +27,7 @@ import settings from "../content/settings.json";
     <div id="custom-cursor"></div>
 
     <!-- Audio Player -->
-    <AudioPlayer client:only="react" tracks={settings.playlist} />
+    <AudioPlayer client:load tracks={settings.playlist} />
 
     <script>
       const cursor = document.getElementById("custom-cursor");
