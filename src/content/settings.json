@@ -1,7 +1,7 @@
 {
   "siteName": "808 FEST",
   "heroVideo": "/images/test.webm",
-  "sectionVideo": "/video/output.webm",
+  "sectionVideo": "/video/output_opt_audio.mp4",
   "playlist": [
     "/audio/aychuchi.mp3",
     "/audio/chapeta.mp3",
