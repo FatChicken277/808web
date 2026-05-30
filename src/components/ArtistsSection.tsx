@@ -45,7 +45,7 @@ export default function ArtistsSection({ artists = [] }: { artists?: any[] }) {
   };
 
   return (
-    <section className="w-full bg-gradient-to-bl from-[#4a126b] via-black via-50% to-[#0f5c24] text-white py-12 overflow-hidden border-t border-white/10">
+    <section className="w-full bg-linear-to-bl from-[#4a126b] via-black via-50% to-[#0f5c24] text-white py-12 overflow-hidden border-t border-white/10">
       {/* Header */}
       <div className="flex items-center justify-between mb-8 px-6 md:px-12">
         <div className="flex items-baseline gap-4">
@@ -91,60 +91,67 @@ export default function ArtistsSection({ artists = [] }: { artists?: any[] }) {
         {displayArtists.map((artist, idx) => {
           // Pseudo-random slight rotations
           const rotations = [
-            "group-hover:-rotate-2", 
-            "group-hover:rotate-1", 
-            "group-hover:-rotate-1", 
+            "group-hover:-rotate-2",
+            "group-hover:rotate-1",
+            "group-hover:-rotate-1",
             "group-hover:rotate-2",
             "group-hover:-rotate-3",
-            "group-hover:rotate-3"
+            "group-hover:rotate-3",
           ];
           const randomRotation = rotations[idx % rotations.length];
 
           return (
             <a
               key={idx}
-              href={artist.instagram ? `https://instagram.com/${artist.instagram}` : undefined}
+              href={
+                artist.instagram
+                  ? `https://instagram.com/${artist.instagram}`
+                  : undefined
+              }
               target={artist.instagram ? "_blank" : undefined}
               rel={artist.instagram ? "noopener noreferrer" : undefined}
-              className="group relative flex-shrink-0 w-[65vw] sm:w-[40vw] md:w-[22vw] lg:w-auto snap-start lg:snap-align-none block cursor-pointer"
+              className="group relative shrink-0 w-[65vw] sm:w-[40vw] md:w-[22vw] lg:w-auto snap-start lg:snap-align-none block cursor-pointer"
             >
               {/* Apple-style Animated Border Wrapper */}
-              <div className={`relative w-full rounded-xl p-[2px] transition-all duration-500 ${randomRotation} group-hover:scale-[1.05] group-hover:z-50 group-hover:shadow-[0_20px_50px_rgba(162,49,244,0.4)] overflow-hidden`}>
-                
+              <div
+                className={`relative w-full rounded-xl p-[2px] transition-all duration-500 ${randomRotation} group-hover:scale-[1.05] group-hover:z-50 group-hover:shadow-[0_20px_50px_rgba(162,49,244,0.4)] overflow-hidden`}
+              >
                 {/* Default border */}
                 <div className="absolute inset-0 bg-white/10 group-hover:opacity-0 transition-opacity duration-500"></div>
 
                 {/* Animated Rainbow border (808 colors: purple & green) */}
-                <div className="absolute inset-[-100%] opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#9333ea_0%,#39FF14_25%,#9333ea_50%,#39FF14_75%,#9333ea_100%)]"></div>
+                <div className="absolute -inset-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#9333ea_0%,#39FF14_25%,#9333ea_50%,#39FF14_75%,#9333ea_100%)]"></div>
 
                 {/* Inner Content Wrapper */}
-                <div className={`relative z-10 w-full h-full flex flex-col bg-black rounded-[10px] overflow-hidden`}>
+                <div
+                  className={`relative z-10 w-full h-full flex flex-col bg-black rounded-[10px] overflow-hidden`}
+                >
                   {/* Artist Header */}
-                <div className="p-3 flex justify-between items-center bg-black border-b border-white/10 shrink-0">
-                  <span className="text-[11px] font-bold uppercase tracking-tight truncate pr-2">
-                    {artist.name}
-                  </span>
-                <div className="text-white group-hover:text-purple-400 transition-colors">
-                  <InstagramIcon size={14} />
+                  <div className="p-3 flex justify-between items-center bg-black border-b border-white/10 shrink-0">
+                    <span className="text-[11px] font-bold uppercase tracking-tight truncate pr-2">
+                      {artist.name}
+                    </span>
+                    <div className="text-white group-hover:text-purple-400 transition-colors">
+                      <InstagramIcon size={14} />
+                    </div>
+                  </div>
+
+                  {/* Image container - Absolute inset to prevent bleeding/layout shifts */}
+                  <div className="relative w-full aspect-3/4 overflow-hidden">
+                    <img
+                      src={artist.image || "/video/video.avif"}
+                      alt={artist.name}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
               </div>
-
-              {/* Image container - Absolute inset to prevent bleeding/layout shifts */}
-              <div className="relative w-full aspect-[3/4] overflow-hidden">
-                <img
-                  src={artist.image || "/video/video.avif"}
-                  alt={artist.name}
-                  className="absolute inset-0 w-full h-full object-cover"
-                />
-              </div>
-              </div>
-            </div>
-          </a>
+            </a>
           );
         })}
 
         {/* Trailing spacer to preserve right padding and rotation space */}
-        <div className="flex-shrink-0 w-6 md:w-12 lg:hidden h-1 pointer-events-none"></div>
+        <div className="shrink-0 w-6 md:w-12 lg:hidden h-1 pointer-events-none"></div>
       </div>
     </section>
   );

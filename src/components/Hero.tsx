@@ -15,7 +15,7 @@ export default function Hero({
     gsap.fromTo(
       mainRef.current,
       { opacity: 0, y: 30 },
-      { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" }
+      { opacity: 1, y: 0, duration: 1.2, ease: "power3.out" },
     );
   }, []);
 
@@ -24,7 +24,6 @@ export default function Hero({
   return (
     <>
       <div className="relative min-h-screen w-full overflow-hidden bg-black font-sans text-white">
-
         {/* Background Video/Image Placeholder */}
         <div className="absolute inset-0 z-0 h-full w-full">
           {isVideo ? (
@@ -43,7 +42,7 @@ export default function Hero({
               className="h-full w-full object-cover opacity-80 mix-blend-screen"
             />
           )}
-          <div className="absolute inset-0 bg-gradient-to-tr from-purple-900/20 via-transparent to-black/90 animate-gradient"></div>
+          <div className="absolute inset-0 bg-linear-to-tr from-purple-900/20 via-transparent to-black/90 animate-gradient"></div>
         </div>
 
         {/* Main Content */}
@@ -147,7 +146,7 @@ export default function Hero({
           </div>
         </div>
       </div>
-      
+
       <TicketModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </>
   );
