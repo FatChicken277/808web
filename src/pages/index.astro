@@ -28,8 +28,8 @@ const teamData = teamEntries.map((entry: any) => entry.data).sort((a: any, b: an
     <ArtistsSection client:only="react" artists={artistsData} />
     <VideoSection client:only="react" video={settings.sectionVideo} />
     <GridSection posts={caosData} />
-    <MapSection />
     <TeamSection client:only="react" team={teamData} />
+    <MapSection />
     <Footer />
   </div>
 </Layout>

@@ -14,9 +14,11 @@ const VisualBlock = ({
   img,
   bg,
   className,
-}: Partial<BlockProps> & { className?: string }) => (
+  style,
+}: Partial<BlockProps> & { className?: string; style?: React.CSSProperties }) => (
   <div
-    className={`relative overflow-hidden ${bg || "bg-[#b5b5b5]"} flex items-center justify-center ${className ? className : "w-full h-full flex-1"}`}
+    className={`relative overflow-hidden ${bg || "bg-[#b5b5b5]"} flex items-center justify-center ${className || ""}`}
+    style={style}
   >
     {img ? (
       <img
@@ -40,12 +42,14 @@ const ContentBlock = ({
   content,
   hoverClass,
   className,
-}: Partial<BlockProps> & { className?: string }) => (
+  style,
+}: Partial<BlockProps> & { className?: string; style?: React.CSSProperties }) => (
   <div
-    className={`p-6 bg-black text-white transition-colors duration-500 flex flex-col justify-between overflow-hidden ${hoverClass} ${className ? className : "w-full h-full flex-1"}`}
+    className={`p-6 bg-black text-white transition-colors duration-500 flex flex-col justify-between overflow-hidden ${hoverClass} ${className || ""}`}
+    style={style}
   >
     <div className="space-y-2">
-      <h3 className="text-2xl md:text-3xl font-black uppercase leading-tight tracking-tighter">
+      <h3 className="text-xl md:text-2xl lg:text-3xl font-black uppercase leading-tight tracking-tighter">
         {title}
       </h3>
       {content && (
@@ -115,193 +119,49 @@ export default function GridSection({ posts = [] }: { posts?: any[] }) {
     "group-hover:bg-orange-500 group-hover:text-white",
   ];
 
-  const getSizingClasses = (
-    direction = "vertical",
-    distribution = "50/50",
-    isVisual = true,
-  ) => {
-    const classMap: Record<string, Record<string, { v: string; c: string }>> = {
-      // vertical means side-by-side (vertical cut), so use width
-      vertical: {
-        "50/50": { v: "w-[50%] h-full shrink-0", c: "w-[50%] h-full shrink-0" },
-        "60/40": { v: "w-[60%] h-full shrink-0", c: "w-[40%] h-full shrink-0" },
-        "40/60": { v: "w-[40%] h-full shrink-0", c: "w-[60%] h-full shrink-0" },
-        "80/20": { v: "w-[80%] h-full shrink-0", c: "w-[20%] h-full shrink-0" },
-        "20/80": { v: "w-[20%] h-full shrink-0", c: "w-[80%] h-full shrink-0" },
-      },
-      // horizontal means top-to-bottom (horizontal cut), so use height
-      horizontal: {
-        "50/50": { v: "h-[50%] w-full shrink-0", c: "h-[50%] w-full shrink-0" },
-        "60/40": { v: "h-[60%] w-full shrink-0", c: "h-[40%] w-full shrink-0" },
-        "40/60": { v: "h-[40%] w-full shrink-0", c: "h-[60%] w-full shrink-0" },
-        "80/20": { v: "h-[80%] w-full shrink-0", c: "h-[20%] w-full shrink-0" },
-        "20/80": { v: "h-[20%] w-full shrink-0", c: "h-[80%] w-full shrink-0" },
-      },
-    };
-
-    const dirMap = classMap[direction] || classMap["vertical"];
-    const distMap = dirMap[distribution] || dirMap["50/50"];
-    return isVisual ? distMap.v : distMap.c;
-  };
-
-  const rows = [];
-  let i = 0;
-  let colorIdx = 0;
-
-  while (i < displayPosts.length) {
-    const post = displayPosts[i];
-    const width = post.width === "1" ? 1 : 2;
-
-    if (width === 1) {
-      rows.push({
-        isSingle: true,
-        ratio: "grid-cols-1",
-        item: {
-          v: {
-            img: post.image || "/video/video.avif",
-            className: getSizingClasses(
-              post.direction,
-              post.distribution,
-              true,
-            ),
-          },
-          c: {
-            title: post.title,
-            content: post.description,
-            hover: hoverColors[colorIdx % hoverColors.length],
-            className: getSizingClasses(
-              post.direction,
-              post.distribution,
-              false,
-            ),
-          },
-          direction: post.direction || "vertical",
-        },
-      });
-      colorIdx += 1;
-      i += 1;
-    } else {
-      const leftPost = displayPosts[i];
-      const rightPost = displayPosts[i + 1];
-
-      if (!rightPost || rightPost.width === "1") {
-        rows.push({
-          isSingle: false,
-          ratio: "grid-cols-1 md:grid-cols-2",
-          left: {
-            v: {
-              img: leftPost.image || "/video/video.avif",
-              className: getSizingClasses(
-                leftPost.direction,
-                leftPost.distribution,
-                true,
-              ),
-            },
-            c: {
-              title: leftPost.title,
-              content: leftPost.description,
-              hover: hoverColors[colorIdx % hoverColors.length],
-              className: getSizingClasses(
-                leftPost.direction,
-                leftPost.distribution,
-                false,
-              ),
-            },
-            direction: leftPost.direction || "vertical",
-          },
-        });
-        colorIdx += 1;
-        i += 1;
-      } else {
-        rows.push({
-          isSingle: false,
-          ratio: "grid-cols-1 md:grid-cols-2",
-          left: {
-            v: {
-              img: leftPost.image || "/video/video.avif",
-              className: getSizingClasses(
-                leftPost.direction,
-                leftPost.distribution,
-                true,
-              ),
-            },
-            c: {
-              title: leftPost.title,
-              content: leftPost.description,
-              hover: hoverColors[colorIdx % hoverColors.length],
-              className: getSizingClasses(
-                leftPost.direction,
-                leftPost.distribution,
-                false,
-              ),
-            },
-            direction: leftPost.direction || "vertical",
-          },
-          right: {
-            v: {
-              img: rightPost.image || "/video/video.avif",
-              className: getSizingClasses(
-                rightPost.direction,
-                rightPost.distribution,
-                true,
-              ),
-            },
-            c: {
-              title: rightPost.title,
-              content: rightPost.description,
-              hover: hoverColors[(colorIdx + 1) % hoverColors.length],
-              className: getSizingClasses(
-                rightPost.direction,
-                rightPost.distribution,
-                false,
-              ),
-            },
-            direction: rightPost.direction || "vertical",
-          },
-        });
-        colorIdx += 2;
-        i += 2;
-      }
-    }
-  }
-
   return (
     <section className="w-full bg-black text-white">
-      {rows.map((row: any, idx) => (
-        <div key={idx} className={`grid ${row.ratio} h-[80vh]`}>
-          {row.isSingle ? (
-            <div
-              className={`group flex ${row.item.direction === "vertical" ? "flex-row" : "flex-col"} overflow-hidden h-full w-full`}
-            >
-              <VisualBlock {...row.item.v} />
-              <ContentBlock {...row.item.c} hoverClass={row.item.c.hover} />
-            </div>
-          ) : (
-            <>
-              {/* Left Column */}
-              <div
-                className={`group flex ${row.left.direction === "vertical" ? "flex-row" : "flex-col"} overflow-hidden h-full`}
-              >
-                <VisualBlock {...row.left.v} />
-                <ContentBlock {...row.left.c} hoverClass={row.left.c.hover} />
-              </div>
+      <div className="grid grid-cols-1 md:grid-cols-6 auto-rows-[45vh]">
+        {displayPosts.map((post: any, idx: number) => {
+          let colSpan = "md:col-span-2"; // default for width="3"
+          if (post.width === "1") colSpan = "md:col-span-6";
+          if (post.width === "2") colSpan = "md:col-span-3";
 
-              {/* Right Column */}
-              {row.right && (
-                <div
-                  className={`group flex ${row.right.direction === "vertical" ? "flex-row" : "flex-col"} overflow-hidden h-full`}
-                >
-                  <VisualBlock {...row.right.v} />
-                  <ContentBlock
-                    {...row.right.c}
-                    hoverClass={row.right.c.hover}
-                  />
-                </div>
-              )}
-            </>
-          )}
-        </div>
-      ))}
+          let flexDir = "flex-row";
+          switch (post.direction) {
+            case "vertical": flexDir = "flex-row"; break;
+            case "vertical-f": flexDir = "flex-row-reverse"; break;
+            case "horizontal": flexDir = "flex-col"; break;
+            case "horizontal-f": flexDir = "flex-col-reverse"; break;
+            default: flexDir = "flex-row"; break;
+          }
+
+          // Parse distribution like "60/40" or "80/40" into flex basis
+          const [vStr, cStr] = (post.distribution || "50/50").split("/");
+          const vFlex = parseInt(vStr) || 50;
+          const cFlex = parseInt(cStr) || 50;
+
+          const hoverClass = hoverColors[idx % hoverColors.length];
+
+          return (
+            <div
+              key={idx}
+              className={`group flex ${flexDir} overflow-hidden w-full h-full ${colSpan}`}
+            >
+              <VisualBlock
+                img={post.image || "/video/video.avif"}
+                style={{ flex: vFlex }}
+              />
+              <ContentBlock
+                title={post.title}
+                content={post.description}
+                hoverClass={hoverClass}
+                style={{ flex: cFlex }}
+              />
+            </div>
+          );
+        })}
+      </div>
     </section>
   );
 }
