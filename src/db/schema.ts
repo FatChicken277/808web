@@ -3,6 +3,7 @@ import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core";
 export const tickets = sqliteTable("tickets", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
   full_name: text("full_name").notNull(),
+  id_type: text("id_type").notNull().default("CC"),
   cedula: text("cedula").notNull().unique(),
   phone: text("phone").notNull(),
   email: text("email").notNull().unique(),

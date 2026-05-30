@@ -11,7 +11,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const db = getDb((env as any) || process.env);
     const body = await request.json();
-    let { fullName, cedula, phone, email } = body;
+    let { fullName, idType, cedula, phone, email } = body;
+
+    if (!idType) idType = "C.C.";
 
     if (!fullName || !cedula || !phone || !email) {
       return new Response(
@@ -45,6 +47,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Insert to DB
     await db.insert(tickets).values({
       full_name: fullName,
+      id_type: idType,
       cedula,
       phone,
       email,

@@ -8,6 +8,7 @@ interface TicketModalProps {
 export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
   const [formData, setFormData] = useState({
     fullName: '',
+    idType: 'C.C.',
     cedula: '',
     phone: '',
     email: '',
@@ -51,7 +52,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
     }
 
     if (!/^\d+$/.test(formData.cedula) || formData.cedula.length < 6) {
-      setError('La cédula debe contener solo números y al menos 6 dígitos.');
+      setError('El número de documento debe contener solo números y al menos 6 dígitos.');
       return;
     }
 
@@ -115,15 +116,28 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 />
               </div>
-              <div>
-                <label className="mb-1 block text-xs font-bold uppercase tracking-widest text-white/70">Cédula</label>
-                <input
-                  required
-                  type="text"
-                  className="w-full bg-white/5 border border-white/10 p-2 text-white focus:border-white focus:outline-none"
-                  value={formData.cedula}
-                  onChange={(e) => setFormData({ ...formData, cedula: e.target.value })}
-                />
+              <div className="flex gap-2">
+                <div className="w-1/3">
+                  <label className="mb-1 block text-xs font-bold uppercase tracking-widest text-white/70">Tipo</label>
+                  <select
+                    className="w-full bg-white/5 border border-white/10 p-2 text-white focus:border-white focus:outline-none appearance-none"
+                    value={formData.idType}
+                    onChange={(e) => setFormData({ ...formData, idType: e.target.value })}
+                  >
+                    <option value="C.C." className="bg-zinc-950">C.C.</option>
+                    <option value="T.I." className="bg-zinc-950">T.I.</option>
+                  </select>
+                </div>
+                <div className="flex-1">
+                  <label className="mb-1 block text-xs font-bold uppercase tracking-widest text-white/70">Número de Documento</label>
+                  <input
+                    required
+                    type="text"
+                    className="w-full bg-white/5 border border-white/10 p-2 text-white focus:border-white focus:outline-none"
+                    value={formData.cedula}
+                    onChange={(e) => setFormData({ ...formData, cedula: e.target.value })}
+                  />
+                </div>
               </div>
               <div>
                 <label className="mb-1 block text-xs font-bold uppercase tracking-widest text-white/70">Celular</label>

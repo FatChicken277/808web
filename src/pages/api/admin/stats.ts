@@ -12,9 +12,32 @@ export const GET: APIRoute = async ({ locals }) => {
     const allTickets = await db.select().from(tickets).orderBy(desc(tickets.created_at));
     const attendedCount = allTickets.filter(t => t.attended).length;
 
+    const censorString = (str: string, visibleChars = 3) => {
+      if (!str) return "";
+      if (str.length <= visibleChars) return str.substring(0, 1) + '*'.repeat(str.length - 1);
+      return str.substring(0, visibleChars) + '*'.repeat(str.length - visibleChars);
+    };
+
+    const censorEmail = (email: string) => {
+      if (!email) return "";
+      const [local, domain] = email.split('@');
+      if (!domain) return censorString(email, 3);
+      return censorString(local, 3) + '@' + domain;
+    };
+
+    const censoredTickets = allTickets.map(t => ({
+      id: t.id,
+      full_name: t.full_name.split(' ').map(word => censorString(word, 3)).join(' '),
+      cedula: censorString(t.cedula, 3),
+      id_type: (t as any).id_type || "CC",
+      email: censorEmail(t.email),
+      attended: t.attended,
+      created_at: t.created_at
+    }));
+
     return new Response(JSON.stringify({ 
       stats: { total: allTickets.length, attended: attendedCount },
-      tickets: allTickets
+      tickets: censoredTickets
     }), { status: 200 });
   } catch (error: any) {
     return new Response(JSON.stringify({ error: error.message }), { status: 500 });
