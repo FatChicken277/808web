@@ -24,7 +24,7 @@ export default function Hero({
 
   return (
     <>
-      <div className="relative min-h-screen w-full overflow-hidden bg-black font-sans text-white">
+      <div className="relative min-h-[100dvh] w-full overflow-hidden bg-black font-sans text-white">
         {/* Background Video/Image Placeholder */}
         <div className="absolute inset-0 z-0 h-full w-full">
           {isVideo ? (
@@ -49,7 +49,7 @@ export default function Hero({
         {/* Main Content */}
         <div
           ref={mainRef}
-          className="relative z-10 flex h-full min-h-screen flex-col px-6 py-6 md:px-12 md:py-8 justify-between"
+          className="relative z-10 flex h-full min-h-[100dvh] flex-col px-6 py-6 md:px-12 md:py-8 justify-between"
         >
           {/* Header */}
           <header className="flex flex-col md:flex-row w-full items-start md:items-start justify-between mix-blend-difference text-white gap-6">

@@ -53,6 +53,18 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
     if (tracks && tracks.length > 0) {
       stateRef.current.playlist = shuffleArray(tracks);
     }
+    
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.metadata = new MediaMetadata({
+        title: '808 FEST - Música, Arte y Under',
+        artist: '808 FEST Radio',
+        album: 'Live Set',
+        artwork: [
+          { src: '/favicon.svg', sizes: '512x512', type: 'image/svg+xml' },
+          { src: '/favicon.ico', sizes: '512x512', type: 'image/x-icon' }
+        ]
+      });
+    }
   }, [tracks]);
 
   // Función para manejar el crossfade suave
