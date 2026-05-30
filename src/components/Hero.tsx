@@ -53,7 +53,7 @@ export default function Hero({
           {/* Header */}
           <header className="flex flex-col md:flex-row w-full items-start md:items-start justify-between mix-blend-difference text-white gap-6">
             {/* Left: Logos */}
-            <div className="flex items-center gap-4 shrink-0">
+            <div className="hidden md:flex items-center gap-4 shrink-0">
               <img
                 src="/logos/logos.png"
                 alt="808 Logos"
@@ -110,7 +110,7 @@ export default function Hero({
           </header>
 
           {/* Hero Body */}
-          <div className="flex flex-1 flex-col items-end justify-start pt-20">
+          <div className="flex flex-1 flex-col items-center md:items-end justify-center md:justify-start md:pt-20">
             <div className="flex w-full sm:w-60 flex-col items-center space-y-4">
               {/* Event Logo Area */}
               <div className="relative w-full flex items-center justify-center">
@@ -125,7 +125,7 @@ export default function Hero({
               <div className="w-full bg-white text-black text-xs font-bold uppercase tracking-widest mt-5 flex flex-col">
                 <button
                   onClick={() => setIsModalOpen(true)}
-                  className="block w-full text-center py-3 border-b border-black hover:bg-[#39FF14] transition-colors"
+                  className="block w-full text-center py-3 border-b border-black hover:bg-[#39FF14] transition-colors cursor-pointer"
                 >
                   OBTENER TICKETS
                 </button>
@@ -145,6 +145,15 @@ export default function Hero({
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Mobile Only: Bottom Logos */}
+          <div className="md:hidden flex justify-center pb-4 pt-10 mix-blend-difference">
+            <img
+              src="/logos/logos.png"
+              alt="808 Logos"
+              className="h-6 w-auto object-contain opacity-80"
+            />
           </div>
         </div>
       </div>

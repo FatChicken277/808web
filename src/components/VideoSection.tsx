@@ -74,10 +74,10 @@ export default function VideoSection({
           />
         )}
         {/* Play Button Overlay */}
-        <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-          <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl scale-50 group-hover:scale-100 transition-transform duration-500 delay-100">
+        <div className="absolute inset-0 flex items-center justify-center bg-black/10 group-hover:bg-black/30 transition-colors duration-500">
+          <div className="w-16 h-16 md:w-20 md:h-20 bg-white rounded-full flex items-center justify-center shadow-2xl transition-transform duration-500 group-hover:scale-110">
             <svg
-              className="w-10 h-10 text-black ml-1"
+              className="w-8 h-8 md:w-10 md:h-10 text-black"
               fill="currentColor"
               viewBox="0 0 24 24"
             >

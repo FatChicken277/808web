@@ -99,14 +99,14 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
 
           let vol = 0;
           // Hacemos el fade más largo y lento (2 segundos = 20 pasos de 100ms)
-          const step = 0.5 / 20;
+          const step = 0.15 / 20;
 
           crossfadeIntervalRef.current = setInterval(() => {
             vol += step;
-            if (vol >= 0.5) {
+            if (vol >= 0.15) {
               if (crossfadeIntervalRef.current)
                 clearInterval(crossfadeIntervalRef.current);
-              nextAudio.volume = 0.5;
+              nextAudio.volume = 0.15;
               activeAudio.pause();
               activeAudio.volume = 0;
 
@@ -120,7 +120,7 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
             } else {
               nextAudio.volume = vol;
               // Desvanecer el activo un poco más rápido para evitar un pico de volumen alto
-              activeAudio.volume = Math.max(0, 0.5 - vol * 1.5);
+              activeAudio.volume = Math.max(0, 0.15 - vol * 1.5);
             }
           }, 100);
         })
@@ -159,9 +159,9 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
 
           let vol = 0;
           crossfadeIntervalRef.current = setInterval(() => {
-            vol += 0.05;
-            if (vol >= 0.5) {
-              activeAudio.volume = 0.5;
+            vol += 0.015;
+            if (vol >= 0.15) {
+              activeAudio.volume = 0.15;
               if (crossfadeIntervalRef.current)
                 clearInterval(crossfadeIntervalRef.current);
             } else {
@@ -229,7 +229,7 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
         if (activeAudio) {
           activeAudio.play().then(() => {
             setIsPlaying(true);
-            activeAudio.volume = 0.5;
+            activeAudio.volume = 0.15;
             if (timerRef.current) clearTimeout(timerRef.current);
             timerRef.current = setTimeout(crossfadeToNext, 8000);
           }).catch(e => console.log(e));
@@ -267,7 +267,7 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
         .play()
         .then(() => {
           setIsPlaying(true);
-          activeAudio.volume = 0.5;
+          activeAudio.volume = 0.15;
           if (timerRef.current) clearTimeout(timerRef.current);
           timerRef.current = setTimeout(crossfadeToNext, 8000);
         })
