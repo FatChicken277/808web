@@ -18,6 +18,29 @@ const InstagramIcon = ({ size = 24 }: { size?: number }) => (
   </svg>
 );
 
+const HackerText = () => {
+  const [decor, setDecor] = React.useState({ left: '0', right: '1' });
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*<>/?';
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setDecor({
+        left: chars[Math.floor(Math.random() * chars.length)],
+        right: chars[Math.floor(Math.random() * chars.length)]
+      });
+    }, 80); // Fast scramble like Minecraft obfuscation
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <span className="text-[9px] font-mono uppercase truncate mt-1 text-[#39FF14] drop-shadow-[0_0_8px_rgba(57,255,20,1)]">
+      <span className="opacity-70 inline-block w-2 text-center">{decor.left}</span>
+      <span className="mx-1">EL HACKER</span>
+      <span className="opacity-70 inline-block w-2 text-center">{decor.right}</span>
+    </span>
+  );
+};
+
 const defaultTeam = [
   { name: "John Doe", role: "Creative Director", instagram: "johndoe" },
   { name: "Jane Smith", role: "Logistics", instagram: "janesmith" },
@@ -129,11 +152,13 @@ export default function TeamSection({ team = [] }: { team?: any[] }) {
                       <span className="text-[11px] font-bold uppercase tracking-tight truncate">
                         {member.name}
                       </span>
-                      {member.role && (
-                        <span className="text-[9px] font-mono uppercase text-white/60 truncate mt-1">
+                      {member.role === 'El Hacker' ? (
+                        <HackerText />
+                      ) : member.role ? (
+                        <span className="text-[9px] font-mono uppercase truncate mt-1 text-white/60">
                           {member.role}
                         </span>
-                      )}
+                      ) : null}
                     </div>
                     {member.instagram && (
                       <div className="text-white group-hover:text-purple-400 transition-colors shrink-0">
