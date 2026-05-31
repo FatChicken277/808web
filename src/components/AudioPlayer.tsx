@@ -103,13 +103,8 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
     if (nextGain) nextGain.gain.value = 0;
 
     nextAudio.onloadedmetadata = () => {
-      const duration = nextAudio.duration;
-      if (duration > 20) {
-        const minStart = duration * 0.3;
-        const maxStart = duration * 0.7;
-        nextAudio.currentTime =
-          Math.random() * (maxStart - minStart) + minStart;
-      }
+      // Evitar el intro (primeros 40s)
+      nextAudio.currentTime = 40;
 
       nextAudio
         .play()
@@ -118,15 +113,15 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
             clearInterval(crossfadeIntervalRef.current);
 
           let vol = 0;
-          const step = 0.3 / 20;
+          const step = 0.4 / 20;
 
           crossfadeIntervalRef.current = setInterval(() => {
             vol += step;
-            if (vol >= 0.3) {
+            if (vol >= 0.4) {
               if (crossfadeIntervalRef.current)
                 clearInterval(crossfadeIntervalRef.current);
-              nextAudio.volume = 0.3;
-              if (nextGain) nextGain.gain.value = 0.3;
+              nextAudio.volume = 0.4;
+              if (nextGain) nextGain.gain.value = 0.4;
               activeAudio.pause();
               activeAudio.volume = 0;
               if (activeGain) activeGain.gain.value = 0;
@@ -142,7 +137,7 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
               nextAudio.volume = vol;
               if (nextGain) nextGain.gain.value = vol;
               // Desvanecer el activo un poco más rápido para evitar un pico de volumen alto
-              const activeVol = Math.max(0, 0.3 - vol * 1.5);
+              const activeVol = Math.max(0, 0.4 - vol * 1.5);
               activeAudio.volume = activeVol;
               if (activeGain) activeGain.gain.value = activeVol;
             }
@@ -168,13 +163,8 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
     if (activeGain) activeGain.gain.value = 0;
 
     activeAudio.onloadedmetadata = () => {
-      const duration = activeAudio.duration;
-      if (duration > 20) {
-        const minStart = duration * 0.3;
-        const maxStart = duration * 0.7;
-        activeAudio.currentTime =
-          Math.random() * (maxStart - minStart) + minStart;
-      }
+      // Evitar el intro (primeros 40s)
+      activeAudio.currentTime = 40;
 
       activeAudio
         .play()
@@ -185,10 +175,10 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
 
           let vol = 0;
           crossfadeIntervalRef.current = setInterval(() => {
-            vol += 0.03;
-            if (vol >= 0.3) {
-              activeAudio.volume = 0.3;
-              if (activeGain) activeGain.gain.value = 0.3;
+            vol += 0.04;
+            if (vol >= 0.4) {
+              activeAudio.volume = 0.4;
+              if (activeGain) activeGain.gain.value = 0.4;
               if (crossfadeIntervalRef.current)
                 clearInterval(crossfadeIntervalRef.current);
             } else {
@@ -273,8 +263,8 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
         if (activeAudio) {
           activeAudio.play().then(() => {
             setIsPlaying(true);
-            activeAudio.volume = 0.3;
-            if (activeGain) activeGain.gain.value = 0.3;
+            activeAudio.volume = 0.4;
+            if (activeGain) activeGain.gain.value = 0.4;
             if (timerRef.current) clearTimeout(timerRef.current);
             timerRef.current = setTimeout(crossfadeToNext, 8000);
           }).catch(e => console.log(e));
@@ -312,8 +302,8 @@ export default function AudioPlayer({ tracks = [] }: { tracks?: string[] }) {
         .play()
         .then(() => {
           setIsPlaying(true);
-          activeAudio.volume = 0.3;
-          if (activeGain) activeGain.gain.value = 0.3;
+          activeAudio.volume = 0.4;
+          if (activeGain) activeGain.gain.value = 0.4;
           if (timerRef.current) clearTimeout(timerRef.current);
           timerRef.current = setTimeout(crossfadeToNext, 8000);
         })
