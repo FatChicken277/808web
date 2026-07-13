@@ -1,0 +1,1 @@
+ALTER TABLE `tickets` ADD `id_type` text DEFAULT 'CC' NOT NULL;

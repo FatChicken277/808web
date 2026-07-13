@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import gsap from 'gsap';
-import { Users, UserCheck, Percent, Download, Search, Loader2 } from 'lucide-react';
+import { Users, UserCheck, Percent, Download, Search, Loader2, LogOut, Plus, Copy, Check, Trash2, Ticket } from 'lucide-react';
+
+interface Artist {
+  id: number;
+  name: string;
+  code: string;
+  count: number;
+}
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({ total: 0, attended: 0 });
@@ -8,7 +15,24 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
 
+  const [artists, setArtists] = useState<Artist[]>([]);
+  const [directCount, setDirectCount] = useState(0);
+  const [newArtist, setNewArtist] = useState({ name: '', code: '' });
+  const [artistError, setArtistError] = useState('');
+  const [savingArtist, setSavingArtist] = useState(false);
+  const [copiedCode, setCopiedCode] = useState<string | null>(null);
+
   const rootRef = useRef<HTMLDivElement>(null);
+
+  const loadArtists = () => {
+    fetch('/api/admin/artists')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.artists) setArtists(data.artists);
+        if (typeof data.directCount === 'number') setDirectCount(data.directCount);
+      })
+      .catch(() => {});
+  };
 
   useEffect(() => {
     fetch('/api/admin/stats')
@@ -18,7 +42,60 @@ export default function AdminDashboard() {
         setTickets(data.tickets);
         setLoading(false);
       });
+    loadArtists();
   }, []);
+
+  const handleLogout = async () => {
+    await fetch('/api/admin/logout', { method: 'POST' }).catch(() => {});
+    window.location.href = '/admin/login';
+  };
+
+  const handleAddArtist = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setArtistError('');
+    const name = newArtist.name.trim();
+    const code = newArtist.code.trim().toUpperCase().replace(/\s+/g, '');
+    if (!name || !code) {
+      setArtistError('Ingresa nombre y código.');
+      return;
+    }
+    setSavingArtist(true);
+    try {
+      const res = await fetch('/api/admin/artists', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, code }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setArtistError(data.error || 'No se pudo crear el artista.');
+      } else {
+        setNewArtist({ name: '', code: '' });
+        loadArtists();
+      }
+    } catch {
+      setArtistError('Error de conexión.');
+    } finally {
+      setSavingArtist(false);
+    }
+  };
+
+  const handleDeleteArtist = async (id: number, name: string) => {
+    if (!window.confirm(`¿Eliminar a "${name}"? Los registros ya hechos con su código se conservan.`)) return;
+    await fetch(`/api/admin/artists?id=${id}`, { method: 'DELETE' }).catch(() => {});
+    loadArtists();
+  };
+
+  const handleCopyLink = async (code: string) => {
+    const link = `https://el808fest.com/?ref=${code}`;
+    try {
+      await navigator.clipboard.writeText(link);
+    } catch {
+      // Fallback silencioso si el navegador bloquea el portapapeles.
+    }
+    setCopiedCode(code);
+    setTimeout(() => setCopiedCode((c) => (c === code ? null : c)), 1800);
+  };
 
   // Brand entrance animation (same easing language as the Hero)
   useEffect(() => {
@@ -79,15 +156,23 @@ export default function AdminDashboard() {
               Panel de <span className="text-[#39FF14] drop-shadow-[0_0_18px_rgba(57,255,20,0.45)]">Admin</span>
             </h1>
           </div>
-          <button
-            onClick={handleExport}
-            className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-lg bg-[#39FF14] px-6 py-3 text-sm font-black uppercase tracking-widest text-black shadow-[0_0_15px_rgba(57,255,20,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(57,255,20,0.6)] md:w-auto cursor-pointer"
-          >
-            <span className="relative z-10 flex items-center gap-2">
-              <Download className="h-4 w-4" /> Exportar CSV
-            </span>
-            <span className="absolute inset-0 origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100" />
-          </button>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <button
+              onClick={handleExport}
+              className="group relative inline-flex w-full items-center justify-center gap-2 overflow-hidden rounded-lg bg-[#39FF14] px-6 py-3 text-sm font-black uppercase tracking-widest text-black shadow-[0_0_15px_rgba(57,255,20,0.3)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_25px_rgba(57,255,20,0.6)] md:w-auto cursor-pointer"
+            >
+              <span className="relative z-10 flex items-center gap-2">
+                <Download className="h-4 w-4" /> Exportar CSV
+              </span>
+              <span className="absolute inset-0 origin-left scale-x-0 bg-white transition-transform duration-300 ease-out group-hover:scale-x-100" />
+            </button>
+            <button
+              onClick={handleLogout}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-white/15 px-6 py-3 text-sm font-black uppercase tracking-widest text-white/70 transition-all duration-300 hover:border-white/40 hover:text-white md:w-auto cursor-pointer"
+            >
+              <LogOut className="h-4 w-4" /> Cerrar sesión
+            </button>
+          </div>
         </div>
 
         {/* Stat cards */}
@@ -108,6 +193,127 @@ export default function AdminDashboard() {
             value={`${attendancePct}%`}
             accent
           />
+        </div>
+
+        {/* Artistas / Códigos */}
+        <div data-reveal className="mb-10 overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] backdrop-blur-md shadow-2xl">
+          <div className="border-b border-white/10 p-5">
+            <h2 className="text-sm font-bold uppercase tracking-[0.3em] text-white/70">
+              Artistas / Códigos
+              <span className="ml-2 text-white/30">{artists.length}</span>
+            </h2>
+            <p className="mt-1 text-xs text-white/40">
+              Cada artista tiene un código. Comparte su enlace y cuenta cuántas personas se registran con él.
+            </p>
+          </div>
+
+          {/* Alta de artista */}
+          <form onSubmit={handleAddArtist} className="flex flex-col gap-3 border-b border-white/10 p-5 sm:flex-row sm:items-end">
+            <div className="flex-1">
+              <label className="mb-1 block text-xs font-bold uppercase tracking-widest text-white/50">Nombre del artista</label>
+              <input
+                type="text"
+                value={newArtist.name}
+                onChange={(e) => setNewArtist({ ...newArtist, name: e.target.value })}
+                placeholder="Ej: DJ Ana"
+                className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-[#39FF14]/60 focus:outline-none"
+              />
+            </div>
+            <div className="flex-1 sm:max-w-[220px]">
+              <label className="mb-1 block text-xs font-bold uppercase tracking-widest text-white/50">Código</label>
+              <input
+                type="text"
+                value={newArtist.code}
+                onChange={(e) => setNewArtist({ ...newArtist, code: e.target.value.toUpperCase() })}
+                placeholder="Ej: DJANA"
+                className="w-full rounded-lg border border-white/10 bg-black/40 px-3 py-2 text-sm uppercase text-white placeholder:text-white/30 focus:border-[#39FF14]/60 focus:outline-none"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={savingArtist}
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#39FF14] px-5 py-2 text-sm font-black uppercase tracking-widest text-black transition-all duration-300 hover:-translate-y-0.5 disabled:opacity-50 cursor-pointer"
+            >
+              <Plus className="h-4 w-4" /> Agregar
+            </button>
+          </form>
+
+          {artistError && (
+            <div className="border-b border-white/10 bg-red-500/10 px-5 py-3 text-sm text-red-300">
+              {artistError}
+            </div>
+          )}
+
+          {/* Lista de artistas */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="border-b border-white/10 bg-white/5">
+                <tr>
+                  <th className="p-4 text-xs font-bold uppercase tracking-widest text-white/50">Artista</th>
+                  <th className="p-4 text-xs font-bold uppercase tracking-widest text-white/50">Código</th>
+                  <th className="p-4 text-xs font-bold uppercase tracking-widest text-white/50">Registros</th>
+                  <th className="p-4 text-xs font-bold uppercase tracking-widest text-white/50">Enlace</th>
+                  <th className="p-4"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {artists.map((a) => (
+                  <tr key={a.id} className="border-b border-white/5 transition-colors hover:bg-white/5">
+                    <td className="p-4 font-medium">{a.name}</td>
+                    <td className="p-4">
+                      <span className="rounded border border-white/15 bg-black/40 px-2 py-1 font-mono text-xs uppercase tracking-widest text-[#39FF14]">
+                        {a.code}
+                      </span>
+                    </td>
+                    <td className="p-4">
+                      <span className="text-2xl font-black tracking-tighter text-white">{a.count}</span>
+                    </td>
+                    <td className="p-4">
+                      <button
+                        onClick={() => handleCopyLink(a.code)}
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 px-3 py-1.5 text-xs font-bold uppercase tracking-widest text-white/70 transition-colors hover:border-white/40 hover:text-white cursor-pointer"
+                      >
+                        {copiedCode === a.code ? (
+                          <><Check className="h-3.5 w-3.5 text-[#39FF14]" /> Copiado</>
+                        ) : (
+                          <><Copy className="h-3.5 w-3.5" /> Copiar enlace</>
+                        )}
+                      </button>
+                    </td>
+                    <td className="p-4 text-right">
+                      <button
+                        onClick={() => handleDeleteArtist(a.id, a.name)}
+                        aria-label={`Eliminar ${a.name}`}
+                        className="inline-flex items-center justify-center rounded-lg border border-white/10 p-2 text-white/40 transition-colors hover:border-red-500/50 hover:text-red-400 cursor-pointer"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {/* Fila fija: registros directos / orgánicos */}
+                <tr className="border-b border-white/5 bg-white/[0.02]">
+                  <td className="p-4 font-medium text-white/60">
+                    <span className="inline-flex items-center gap-2">
+                      <Ticket className="h-4 w-4 text-white/30" /> Directo / Orgánico
+                    </span>
+                  </td>
+                  <td className="p-4 text-white/30">—</td>
+                  <td className="p-4">
+                    <span className="text-2xl font-black tracking-tighter text-white/70">{directCount}</span>
+                  </td>
+                  <td className="p-4 text-white/30">Sin código</td>
+                  <td className="p-4"></td>
+                </tr>
+              </tbody>
+            </table>
+
+            {artists.length === 0 && (
+              <div className="p-8 text-center text-sm text-white/40">
+                Aún no hay artistas. Agrega uno arriba para empezar a repartir códigos.
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Table */}
