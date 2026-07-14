@@ -1,6 +1,6 @@
 import type { APIRoute } from "astro";
 import { getDb } from "../../db";
-import { tickets } from "../../db/schema";
+import { tickets, artists } from "../../db/schema";
 import { eq, or } from "drizzle-orm";
 import { Resend } from "resend";
 import qrcode from "qrcode-generator";
@@ -11,7 +11,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   try {
     const db = getDb((env as any) || process.env);
     const body = await request.json();
-    let { fullName, idType, cedula, phone, email } = body;
+    let { fullName, idType, cedula, phone, email, refCode } = body;
 
     if (!idType) idType = "C.C.";
 
@@ -41,6 +41,20 @@ export const POST: APIRoute = async ({ request, locals }) => {
       );
     }
 
+    // Resolve referral code (optional): only store it if it matches an artist.
+    let validRefCode: string | null = null;
+    const normalizedRef = (refCode || "").trim().toUpperCase().replace(/\s+/g, "");
+    if (normalizedRef) {
+      const artist = await db
+        .select()
+        .from(artists)
+        .where(eq(artists.code, normalizedRef))
+        .limit(1);
+      if (artist.length > 0) {
+        validRefCode = artist[0].code;
+      }
+    }
+
     // Generate token
     const token = crypto.randomUUID();
 
@@ -52,6 +66,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       phone,
       email,
       qr_token: token,
+      ref_code: validRefCode,
     });
 
     // Generate QR for frontend SVG

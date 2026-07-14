@@ -9,5 +9,13 @@ export const tickets = sqliteTable("tickets", {
   email: text("email").notNull().unique(),
   qr_token: text("qr_token").notNull().unique(),
   attended: integer("attended", { mode: "boolean" }).notNull().default(false),
+  ref_code: text("ref_code"),
+  created_at: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+});
+
+export const artists = sqliteTable("artists", {
+  id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+  code: text("code").notNull().unique(),
   created_at: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });

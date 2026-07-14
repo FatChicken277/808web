@@ -12,6 +12,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
     cedula: '',
     phone: '',
     email: '',
+    refCode: '',
     terms: false,
   });
   const [loading, setLoading] = useState(false);
@@ -33,6 +34,17 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
       wrapper.style.filter = '';
       document.body.style.overflow = '';
     };
+  }, [isOpen]);
+
+  // Precarga el código de artista desde la URL (?ref=CODIGO) al abrir el modal.
+  useEffect(() => {
+    if (!isOpen) return;
+    const ref = new URLSearchParams(window.location.search).get('ref');
+    if (ref) {
+      setFormData((prev) =>
+        prev.refCode ? prev : { ...prev, refCode: ref.trim().toUpperCase() }
+      );
+    }
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -157,6 +169,16 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                   className="w-full bg-white/5 border border-white/10 p-2 text-white focus:border-white focus:outline-none"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-bold uppercase tracking-widest text-white/70">Código de Artista <span className="text-white/40">(opcional)</span></label>
+                <input
+                  type="text"
+                  placeholder="Si un artista te invitó, ingresa su código"
+                  className="w-full bg-white/5 border border-white/10 p-2 text-white placeholder:text-white/30 focus:border-white focus:outline-none uppercase"
+                  value={formData.refCode}
+                  onChange={(e) => setFormData({ ...formData, refCode: e.target.value.toUpperCase() })}
                 />
               </div>
               <div className="mt-2 flex items-start gap-2">
