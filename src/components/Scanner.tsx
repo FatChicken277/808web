@@ -24,6 +24,54 @@ interface ScanResult {
 
 const RESULT_MS = 2200;
 const COOLDOWN_MS = 1800;
+const QUEUE_KEY = 'offlineQueue';
+
+function readQueue(): string[] {
+  try {
+    const raw = JSON.parse(localStorage.getItem(QUEUE_KEY) || '[]');
+    return Array.isArray(raw) ? raw.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+
+function writeQueue(tokens: string[]) {
+  localStorage.setItem(QUEUE_KEY, JSON.stringify(tokens));
+}
+
+function enqueueToken(token: string): string[] {
+  const next = Array.from(new Set([...readQueue(), token]));
+  writeQueue(next);
+  return next;
+}
+
+async function flushQueue(): Promise<string[]> {
+  const queue = readQueue();
+  if (queue.length === 0) return [];
+  const remaining: string[] = [];
+  for (const token of queue) {
+    try {
+      const res = await fetch(`/api/checkin/${encodeURIComponent(token)}`, { method: 'POST' });
+      // Si no hay red real, fetch lanza; si el servidor responde, lo damos por sincronizado.
+      if (!res.ok && res.status >= 500) remaining.push(token);
+    } catch {
+      remaining.push(token);
+    }
+  }
+  writeQueue(remaining);
+  return remaining;
+}
+
+function requestBackgroundSync() {
+  const reg = navigator.serviceWorker?.ready;
+  if (!reg) return;
+  reg.then((r) => {
+    const syncManager = (r as ServiceWorkerRegistration & { sync?: { register: (tag: string) => Promise<void> } }).sync;
+    if (syncManager?.register) {
+      syncManager.register('sync-checkins').catch(() => {});
+    }
+  }).catch(() => {});
+}
 
 function extractToken(decodedText: string): string {
   let token = decodedText.trim();
@@ -121,11 +169,8 @@ export default function Scanner() {
 
       try {
         if (!navigator.onLine) {
-          setOfflineQueue((prev) => {
-            const next = [...prev, token];
-            localStorage.setItem('offlineQueue', JSON.stringify(next));
-            return next;
-          });
+          setOfflineQueue(enqueueToken(token));
+          requestBackgroundSync();
           setScanResult({
             status: 'OFFLINE_SAVED',
             message: 'Guardado offline',
@@ -159,8 +204,14 @@ export default function Scanner() {
           vibrate(100);
         }
       } catch {
-        setScanResult({ status: 'ERROR', message: 'Error de conexión' });
-        vibrate(100);
+        // Sin red real: encolar como offline en vez de perder el scan
+        setOfflineQueue(enqueueToken(token));
+        requestBackgroundSync();
+        setScanResult({
+          status: 'OFFLINE_SAVED',
+          message: 'Guardado offline',
+        });
+        vibrate(40);
       } finally {
         clearResultSoon();
       }
@@ -170,42 +221,36 @@ export default function Scanner() {
 
   // Network + offline queue
   useEffect(() => {
-    const queue = JSON.parse(localStorage.getItem('offlineQueue') || '[]');
-    setOfflineQueue(queue);
+    setOfflineQueue(readQueue());
     setIsOnline(navigator.onLine);
 
-    const handleOnline = () => setIsOnline(true);
+    const syncNow = async () => {
+      if (!navigator.onLine) return;
+      const remaining = await flushQueue();
+      setOfflineQueue(remaining);
+    };
+
+    const handleOnline = () => {
+      setIsOnline(true);
+      syncNow();
+    };
     const handleOffline = () => setIsOnline(false);
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'SYNC_CHECKINS') syncNow();
+    };
+
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
+    navigator.serviceWorker?.addEventListener('message', handleMessage);
+
+    if (navigator.onLine) syncNow();
+
     return () => {
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
+      navigator.serviceWorker?.removeEventListener('message', handleMessage);
     };
   }, []);
-
-  useEffect(() => {
-    if (!isOnline || offlineQueue.length === 0) return;
-
-    let cancelled = false;
-    (async () => {
-      const remaining: string[] = [];
-      for (const token of offlineQueue) {
-        try {
-          await fetch(`/api/checkin/${encodeURIComponent(token)}`, { method: 'POST' });
-        } catch {
-          remaining.push(token);
-        }
-      }
-      if (cancelled) return;
-      setOfflineQueue(remaining);
-      localStorage.setItem('offlineQueue', JSON.stringify(remaining));
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [isOnline]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Camera scanner
   useEffect(() => {
@@ -307,6 +352,11 @@ export default function Scanner() {
           {offlineQueue.length > 0 && (
             <span className="rounded-full border border-white/15 bg-black/50 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white/60 backdrop-blur-md">
               Sync {offlineQueue.length}
+            </span>
+          )}
+          {!isOnline && (
+            <span className="max-w-[11rem] rounded-full border border-sky-400/30 bg-sky-500/10 px-3 py-1 text-right text-[10px] font-bold uppercase tracking-widest text-sky-300 backdrop-blur-md">
+              Modo offline
             </span>
           )}
         </div>

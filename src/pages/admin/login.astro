@@ -5,6 +5,8 @@ import "../../styles/global.css";
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <title>808 Fest - Acceso Admin</title>
@@ -157,4 +159,12 @@ import "../../styles/global.css";
     animation: grain-animation 0.4s steps(4) infinite;
   }
 </style>
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
+        });
+      }
+    </script>
 </html>

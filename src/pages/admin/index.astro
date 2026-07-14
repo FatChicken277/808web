@@ -6,6 +6,8 @@ import AdminDashboard from '../../components/AdminDashboard';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#000000" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
     <title>808 Fest - Admin Dashboard</title>
@@ -21,6 +23,14 @@ import AdminDashboard from '../../components/AdminDashboard';
 
     <!-- Animated Film Grain (same texture as the landing) -->
     <div class="film-grain" aria-hidden="true"></div>
+
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker.register("/sw.js").catch(() => {});
+        });
+      }
+    </script>
 </body>
 
 <style is:global>
