@@ -215,15 +215,14 @@ export default function Scanner() {
 
     const start = async () => {
       try {
+        const size = Math.min(window.innerWidth, window.innerHeight);
+        const box = Math.floor(size * 0.68);
+
         await scanner.start(
           { facingMode: 'environment' },
           {
             fps: 12,
-            qrbox: (viewfinderWidth, viewfinderHeight) => {
-              const edge = Math.min(viewfinderWidth, viewfinderHeight) * 0.68;
-              return { width: edge, height: edge };
-            },
-            aspectRatio: 1.777,
+            qrbox: { width: box, height: box },
             disableFlip: false,
           },
           (decodedText) => {
@@ -233,6 +232,32 @@ export default function Scanner() {
             // Frame without QR — silent
           },
         );
+
+        // html5-qrcode sizes the video to its internal qrbox; force fullscreen cover.
+        const root = document.getElementById('qr-reader');
+        const fit = (el: HTMLElement | null) => {
+          if (!el) return;
+          el.style.position = 'absolute';
+          el.style.inset = '0';
+          el.style.width = '100%';
+          el.style.height = '100%';
+          el.style.maxWidth = 'none';
+          el.style.maxHeight = 'none';
+        };
+        fit(root);
+        fit(root?.querySelector('#qr-reader__scan_region') as HTMLElement | null);
+        const video = root?.querySelector('video') as HTMLVideoElement | null;
+        if (video) {
+          fit(video);
+          video.style.objectFit = 'cover';
+          video.setAttribute('playsinline', 'true');
+          video.muted = true;
+          // Some browsers leave the element paused after permission — ensure playback.
+          video.play().catch(() => {});
+        }
+        const canvas = root?.querySelector('canvas') as HTMLElement | null;
+        fit(canvas);
+
         if (!disposed) setCameraReady(true);
       } catch (err: any) {
         if (!disposed) {
@@ -289,14 +314,11 @@ export default function Scanner() {
 
       {/* Camera stage */}
       <div className="relative flex min-h-[100dvh] flex-1 items-center justify-center overflow-hidden bg-black">
-        <div
-          id="qr-reader"
-          className="absolute inset-0 [&_video]:h-full [&_video]:w-full [&_video]:object-cover"
-        />
+        <div id="qr-reader" className="absolute inset-0 z-0 overflow-hidden" />
 
         {/* Dim + scan frame */}
         <div className="pointer-events-none absolute inset-0 z-10">
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-transparent to-black/80" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-transparent to-black/70" />
 
           <div className="absolute left-1/2 top-1/2 w-[min(72vw,280px)] -translate-x-1/2 -translate-y-1/2 aspect-square">
             {/* Corner brackets */}
