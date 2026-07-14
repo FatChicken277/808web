@@ -1,5 +1,5 @@
 /* 808 Fest Check-in PWA — cachea /scan y assets para uso sin red */
-const CACHE_VERSION = '808-scan-v2';
+const CACHE_VERSION = '808-scan-v3';
 const PRECACHE = [
   '/scan',
   '/manifest.webmanifest',
@@ -34,30 +34,25 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-function isStaticAsset(url) {
-  return (
-    url.pathname.startsWith('/_astro/') ||
-    url.pathname.startsWith('/icons/') ||
-    url.pathname.endsWith('.css') ||
-    url.pathname.endsWith('.js') ||
-    url.pathname.endsWith('.svg') ||
-    url.pathname.endsWith('.png') ||
-    url.pathname.endsWith('.woff2') ||
-    url.pathname === '/manifest.webmanifest' ||
-    url.pathname === '/favicon.ico' ||
-    url.pathname === '/favicon.svg'
-  );
-}
-
 function isScanNavigation(request, url) {
   if (request.mode !== 'navigate') return false;
   return url.pathname === '/scan' || url.pathname.startsWith('/scan/');
 }
 
+function isAppShellAsset(url) {
+  return (
+    url.pathname.startsWith('/icons/') ||
+    url.pathname === '/manifest.webmanifest' ||
+    url.pathname === '/favicon.ico' ||
+    url.pathname === '/favicon.svg' ||
+    url.pathname === '/sw.js'
+  );
+}
+
 async function networkFirst(request) {
   const cache = await caches.open(CACHE_VERSION);
   try {
-    const fresh = await fetch(request);
+    const fresh = await fetch(request, { cache: 'no-cache' });
     if (fresh && fresh.ok) {
       cache.put(request, fresh.clone());
     }
@@ -65,7 +60,6 @@ async function networkFirst(request) {
   } catch {
     const cached = await cache.match(request, { ignoreSearch: true });
     if (cached) return cached;
-    // Fallback explícito a /scan cacheada
     const shell = await cache.match('/scan');
     if (shell) return shell;
     return new Response('Sin conexión. Abre /scan una vez con internet para prepararlo.', {
@@ -102,20 +96,25 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
-  // APIs siempre a red (la app hace cola offline en localStorage)
+  // APIs siempre a red
   if (url.pathname.startsWith('/api/')) return;
+
+  // JS/CSS de build: network-first para no quedar atrapados con Scanner viejo
+  if (url.pathname.startsWith('/_astro/')) {
+    event.respondWith(networkFirst(request));
+    return;
+  }
 
   if (isScanNavigation(request, url)) {
     event.respondWith(networkFirst(request));
     return;
   }
 
-  if (isStaticAsset(url)) {
+  if (isAppShellAsset(url)) {
     event.respondWith(staleWhileRevalidate(request));
   }
 });
 
-// Background Sync: la página escucha y reintenta la cola
 self.addEventListener('sync', (event) => {
   if (event.tag === 'sync-checkins') {
     event.waitUntil(
@@ -125,5 +124,11 @@ self.addEventListener('sync', (event) => {
         }
       }),
     );
+  }
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
   }
 });

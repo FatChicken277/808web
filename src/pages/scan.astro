@@ -28,8 +28,12 @@ import Scanner from '../components/Scanner';
 
     <script>
       if ("serviceWorker" in navigator) {
-        window.addEventListener("load", () => {
-          navigator.serviceWorker.register("/sw.js").catch(() => {});
+        window.addEventListener("load", async () => {
+          try {
+            const reg = await navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" });
+            await reg.update();
+            if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
+          } catch {}
         });
       }
     </script>
@@ -108,38 +112,6 @@ import Scanner from '../components/Scanner';
     animation: grain-animation 0.4s steps(4) infinite;
   }
 
-  /* html5-qrcode fallback: fill video only — never stretch the decode canvas */
-  #qr-reader {
-    border: none !important;
-    width: 100% !important;
-    height: 100% !important;
-    position: absolute !important;
-    inset: 0 !important;
-    overflow: hidden !important;
-    background: #000 !important;
-  }
-
-  #qr-reader__dashboard_section,
-  #qr-reader__header_message,
-  #qr-reader__scan_region > img,
-  #qr-shaded-region {
-    display: none !important;
-  }
-
-  #qr-reader__scan_region {
-    position: absolute !important;
-    inset: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    min-height: 100% !important;
-  }
-
-  #qr-reader video {
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover !important;
-    border: none !important;
-    border-radius: 0 !important;
-  }
+  /* Estilos del scanner viven en el componente; aquí no forzamos layout del decoder */
 </style>
 </html>
