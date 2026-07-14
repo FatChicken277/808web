@@ -108,7 +108,7 @@ import Scanner from '../components/Scanner';
     animation: grain-animation 0.4s steps(4) infinite;
   }
 
-  /* Force html5-qrcode video to fill the viewport */
+  /* html5-qrcode fallback: fill video only — never stretch the decode canvas */
   #qr-reader {
     border: none !important;
     width: 100% !important;
@@ -132,23 +132,14 @@ import Scanner from '../components/Scanner';
     width: 100% !important;
     height: 100% !important;
     min-height: 100% !important;
-    display: block !important;
-    overflow: hidden !important;
   }
 
-  #qr-reader video,
-  #qr-reader canvas {
-    position: absolute !important;
-    top: 0 !important;
-    left: 0 !important;
+  #qr-reader video {
     width: 100% !important;
     height: 100% !important;
-    max-width: none !important;
-    max-height: none !important;
     object-fit: cover !important;
     border: none !important;
     border-radius: 0 !important;
-    transform: none !important;
   }
 </style>
 </html>
