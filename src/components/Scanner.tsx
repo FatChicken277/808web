@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Html5QrcodeScanner,
-  Html5QrcodeScanType,
-} from 'html5-qrcode';
+import { Html5Qrcode } from 'html5-qrcode';
 import {
   Check,
   Wifi,
@@ -10,6 +7,7 @@ import {
   AlertTriangle,
   X,
   Loader2,
+  CameraOff,
 } from 'lucide-react';
 
 type ScanStatus = 'VALID' | 'ALREADY_USED' | 'INVALID' | 'OFFLINE_SAVED' | 'ERROR';
@@ -144,6 +142,7 @@ export default function Scanner() {
   const [offlineQueue, setOfflineQueue] = useState<string[]>([]);
   const [isOnline, setIsOnline] = useState(true);
   const [cameraReady, setCameraReady] = useState(false);
+  const [cameraError, setCameraError] = useState('');
   const [flash, setFlash] = useState(false);
 
   const processingRef = useRef(false);
@@ -274,60 +273,96 @@ export default function Scanner() {
     };
   }, []);
 
-  // Motor original que sí leía QRs (Html5QrcodeScanner)
+  // Arranca la cámara directo (sin botón del lib que el overlay tapaba)
   useEffect(() => {
     let disposed = false;
-    let scanner: Html5QrcodeScanner | null = null;
+    let scanner: Html5Qrcode | null = null;
 
-    // Esperar un frame para que el contenedor tenga tamaño real
-    const boot = window.setTimeout(() => {
+    const start = async () => {
       const el = document.getElementById('qr-reader');
-      if (!el || disposed) return;
+      if (!el) {
+        setCameraError('No se pudo montar el scanner.');
+        return;
+      }
 
-      scanner = new Html5QrcodeScanner(
-        'qr-reader',
+      // Asegurar tamaño explícito para el decoder
+      const size = Math.max(240, Math.floor(el.clientWidth || Math.min(window.innerWidth - 32, 420)));
+      el.style.width = `${size}px`;
+      el.style.height = `${size}px`;
+
+      scanner = new Html5Qrcode('qr-reader', { verbose: false });
+
+      let cameraConfig: string | MediaTrackConstraints = { facingMode: 'environment' };
+      try {
+        const cameras = await Html5Qrcode.getCameras();
+        if (!cameras.length) throw new Error('No cameras');
+        const back =
+          cameras.find((c) => /back|rear|environment|trasera|posterior/i.test(c.label)) ||
+          cameras[cameras.length - 1];
+        if (back?.id) cameraConfig = back.id;
+      } catch {
+        // fallback facingMode
+      }
+
+      const box = Math.floor(size * 0.72);
+
+      await scanner.start(
+        cameraConfig,
         {
           fps: 12,
-          qrbox: (viewfinderWidth, viewfinderHeight) => {
-            const edge = Math.floor(Math.min(viewfinderWidth, viewfinderHeight) * 0.75);
-            return { width: Math.max(180, edge), height: Math.max(180, edge) };
-          },
-          rememberLastUsedCamera: true,
+          qrbox: { width: box, height: box },
           aspectRatio: 1,
-          supportedScanTypes: [Html5QrcodeScanType.SCAN_TYPE_CAMERA],
-          showTorchButtonIfSupported: true,
+          disableFlip: false,
         },
-        /* verbose */ false,
-      );
-
-      scanner.render(
         (decodedText) => {
           if (!disposed) processScanRef.current(decodedText);
         },
-        () => {
-          // frames sin QR
-        },
+        () => {},
       );
 
-      // Marcar listo cuando aparezca el video
-      const waitVideo = window.setInterval(() => {
-        if (disposed) {
-          window.clearInterval(waitVideo);
-          return;
-        }
-        if (el.querySelector('video')) {
-          setCameraReady(true);
-          window.clearInterval(waitVideo);
-        }
-      }, 200);
-    }, 50);
+      const video = el.querySelector('video') as HTMLVideoElement | null;
+      if (video) {
+        video.setAttribute('playsinline', 'true');
+        video.muted = true;
+        video.style.width = '100%';
+        video.style.height = '100%';
+        video.style.objectFit = 'cover';
+        await video.play().catch(() => {});
+      }
+
+      if (!disposed) {
+        setCameraReady(true);
+        setCameraError('');
+      }
+    };
+
+    start().catch((err: any) => {
+      if (disposed) return;
+      const msg = String(err?.message || err || '');
+      setCameraError(
+        /NotAllowed|Permission|denied/i.test(msg)
+          ? 'Permite el acceso a la cámara y pulsa Reintentar.'
+          : 'No se pudo iniciar la cámara. Pulsa Reintentar.',
+      );
+      setCameraReady(false);
+    });
 
     return () => {
       disposed = true;
-      window.clearTimeout(boot);
       if (resultTimerRef.current) clearTimeout(resultTimerRef.current);
       if (unlockTimerRef.current) clearTimeout(unlockTimerRef.current);
-      scanner?.clear().catch(() => {});
+      if (scanner?.isScanning) {
+        scanner
+          .stop()
+          .then(() => scanner?.clear())
+          .catch(() => {});
+      } else {
+        try {
+          scanner?.clear();
+        } catch {
+          // ignore
+        }
+      }
     };
   }, []);
 
@@ -361,13 +396,11 @@ export default function Scanner() {
 
       <main className="relative z-10 mx-auto flex w-full max-w-md flex-1 flex-col px-4 pb-6">
         <div className="relative mb-4 overflow-hidden rounded-2xl border border-white/10 bg-black/60 shadow-2xl backdrop-blur-md">
-          {/* Contenedor con tamaño real: crítico para que el decoder funcione */}
           <div className="relative aspect-square w-full bg-black">
             <div id="qr-reader" className="h-full w-full overflow-hidden" />
 
-            {/* Marco visual encima (no bloquea el video: pointer-events none) */}
             <div className="pointer-events-none absolute inset-0 z-10">
-              <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/45" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40" />
               <div className="absolute left-1/2 top-1/2 aspect-square w-[72%] -translate-x-1/2 -translate-y-1/2">
                 <span className="absolute left-0 top-0 h-9 w-9 border-l-[3px] border-t-[3px] border-[#39FF14]" />
                 <span className="absolute right-0 top-0 h-9 w-9 border-r-[3px] border-t-[3px] border-[#39FF14]" />
@@ -379,12 +412,26 @@ export default function Scanner() {
               </div>
             </div>
 
-            {!cameraReady && (
-              <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-black/85">
+            {!cameraReady && !cameraError && (
+              <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-black/70">
                 <Loader2 className="h-8 w-8 animate-spin text-[#39FF14]" />
                 <p className="text-xs font-bold uppercase tracking-widest text-white/50">
                   Preparando cámara
                 </p>
+              </div>
+            )}
+
+            {cameraError && (
+              <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 bg-black/90 p-6 text-center">
+                <CameraOff className="h-8 w-8 text-white/50" />
+                <p className="text-sm text-white/70">{cameraError}</p>
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  className="rounded-lg bg-[#39FF14] px-5 py-2.5 text-xs font-black uppercase tracking-widest text-black"
+                >
+                  Reintentar
+                </button>
               </div>
             )}
 
@@ -455,23 +502,14 @@ export default function Scanner() {
         .result-bar {
           animation: barDrain ${RESULT_MS}ms linear forwards;
         }
-
-        /* Dejar solo la cámara; ocultar chrome del lib */
         #qr-reader {
           border: none !important;
         }
-        #qr-reader__dashboard_section,
-        #qr-reader__header_message,
-        #qr-reader__scan_region > img {
-          display: none !important;
-        }
-        #qr-reader__scan_region {
-          min-height: 100% !important;
-        }
         #qr-reader video {
           width: 100% !important;
-          border-radius: 0 !important;
+          height: 100% !important;
           object-fit: cover !important;
+          border-radius: 0 !important;
         }
         #qr-shaded-region {
           border-width: 0 !important;
