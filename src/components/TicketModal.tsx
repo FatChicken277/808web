@@ -138,6 +138,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                   >
                     <option value="C.C." className="bg-zinc-950">C.C.</option>
                     <option value="T.I." className="bg-zinc-950">T.I.</option>
+                    <option value="C.E." className="bg-zinc-950">C.E.</option>
                   </select>
                 </div>
                 <div className="flex-1">

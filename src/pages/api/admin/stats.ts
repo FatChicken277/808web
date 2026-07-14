@@ -29,7 +29,8 @@ export const GET: APIRoute = async ({ locals }) => {
       id: t.id,
       full_name: t.full_name.split(' ').map(word => censorString(word, 3)).join(' '),
       cedula: censorString(t.cedula, 3),
-      id_type: (t as any).id_type || "CC",
+      id_type: t.id_type || "C.C.",
+      ref_code: t.ref_code || null,
       email: censorEmail(t.email),
       attended: t.attended,
       created_at: t.created_at

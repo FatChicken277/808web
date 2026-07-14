@@ -110,8 +110,8 @@ export default function AdminDashboard() {
 
   const handleExport = () => {
     const csvContent = "data:text/csv;charset=utf-8,"
-      + "ID,Nombre,Cédula,Celular,Email,Asistió,Fecha\n"
-      + tickets.map(t => `${t.id},${t.full_name},${t.cedula},${t.phone},${t.email},${t.attended ? 'Si' : 'No'},${new Date(t.created_at).toLocaleString()}`).join("\n");
+      + "ID,Nombre,Documento,Tipo,Email,Codigo Artista,Asistió,Fecha\n"
+      + tickets.map(t => `${t.id},${t.full_name},${t.cedula},${t.id_type || ''},${t.email},${t.ref_code || ''},${t.attended ? 'Si' : 'No'},${new Date(t.created_at).toLocaleString()}`).join("\n");
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
@@ -125,7 +125,7 @@ export default function AdminDashboard() {
     const q = query.trim().toLowerCase();
     if (!q) return tickets;
     return tickets.filter((t) =>
-      [t.full_name, t.email, t.cedula, t.phone]
+      [t.full_name, t.email, t.cedula, t.phone, t.ref_code, t.id_type]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(q)),
     );
@@ -329,7 +329,7 @@ export default function AdminDashboard() {
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar nombre, email, cédula..."
+                placeholder="Buscar nombre, email, documento, código..."
                 className="w-full rounded-lg border border-white/10 bg-black/40 py-2 pl-9 pr-3 text-sm text-white placeholder:text-white/30 transition-colors focus:border-[#39FF14]/60 focus:outline-none"
               />
             </div>
@@ -341,7 +341,8 @@ export default function AdminDashboard() {
                 <tr>
                   <th className="p-4 text-xs font-bold uppercase tracking-widest text-white/50">Nombre</th>
                   <th className="p-4 text-xs font-bold uppercase tracking-widest text-white/50">Email</th>
-                  <th className="p-4 text-xs font-bold uppercase tracking-widest text-white/50">Cédula</th>
+                  <th className="p-4 text-xs font-bold uppercase tracking-widest text-white/50">Documento</th>
+                  <th className="p-4 text-xs font-bold uppercase tracking-widest text-white/50">Código</th>
                   <th className="p-4 text-xs font-bold uppercase tracking-widest text-white/50">Estado</th>
                 </tr>
               </thead>
@@ -350,7 +351,21 @@ export default function AdminDashboard() {
                   <tr key={t.id} className="border-b border-white/5 transition-colors hover:bg-white/5">
                     <td className="p-4 font-medium">{t.full_name}</td>
                     <td className="p-4 text-white/70">{t.email}</td>
-                    <td className="p-4 text-white/70">{t.cedula}</td>
+                    <td className="p-4 text-white/70">
+                      <span className="mr-2 text-xs font-bold uppercase tracking-widest text-white/40">
+                        {t.id_type || 'C.C.'}
+                      </span>
+                      {t.cedula}
+                    </td>
+                    <td className="p-4">
+                      {t.ref_code ? (
+                        <span className="rounded border border-[#39FF14]/40 bg-[#39FF14]/10 px-2 py-1 font-mono text-xs uppercase tracking-widest text-[#39FF14]">
+                          {t.ref_code}
+                        </span>
+                      ) : (
+                        <span className="text-white/30">—</span>
+                      )}
+                    </td>
                     <td className="p-4">
                       {t.attended ? (
                         <span className="inline-flex items-center gap-1.5 rounded-full border border-[#39FF14]/50 bg-[#39FF14]/10 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#39FF14]">
