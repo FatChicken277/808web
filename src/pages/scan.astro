@@ -1,6 +1,19 @@
 ---
 import "../styles/global.css";
 import Scanner from '../components/Scanner';
+import { ADMIN_COOKIE, isValidSessionToken } from "../lib/adminAuth";
+// @ts-ignore
+import { env } from "cloudflare:workers";
+
+const configuredPassword: string = (env as any)?.ADMIN_PASSWORD || "";
+let authed = false;
+
+if (!configuredPassword) {
+  authed = import.meta.env.DEV;
+} else {
+  const cookieValue = Astro.cookies.get(ADMIN_COOKIE)?.value;
+  authed = await isValidSessionToken(cookieValue, configuredPassword);
+}
 ---
 <html lang="es">
 <head>
@@ -23,7 +36,40 @@ import Scanner from '../components/Scanner';
         <div class="glow glow-purple"></div>
     </div>
 
-    <Scanner client:only="react" />
+    {authed ? (
+      <Scanner client:only="react" />
+    ) : (
+      <main class="relative z-10 flex min-h-[100dvh] items-center justify-center p-4 font-sans text-white">
+        <div class="w-full max-w-sm border border-white/15 bg-zinc-950/80 p-8 shadow-2xl backdrop-blur-sm">
+          <p class="mb-1 text-[10px] font-bold uppercase tracking-[0.35em] text-white/40">808 Fest</p>
+          <h1 class="mb-1 text-2xl font-bold uppercase tracking-tighter text-white">Check-in</h1>
+          <p class="mb-6 text-xs uppercase tracking-widest text-white/40">Acceso restringido</p>
+
+          <div id="login-error" class="mb-4 hidden border border-red-500 bg-red-500/20 p-3 text-sm text-red-200"></div>
+
+          <form id="scan-login-form" class="flex flex-col gap-4">
+            <div>
+              <label class="mb-1 block text-xs font-bold uppercase tracking-widest text-white/70" for="password">Clave de acceso</label>
+              <input
+                required
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                class="w-full border border-white/10 bg-white/5 p-2 text-white focus:border-white focus:outline-none"
+              />
+            </div>
+            <button
+              type="submit"
+              id="login-submit"
+              class="mt-2 bg-[#39FF14] p-3 font-bold uppercase tracking-widest text-black transition-colors hover:bg-white disabled:opacity-50"
+            >
+              Entrar al scanner
+            </button>
+          </form>
+        </div>
+      </main>
+    )}
 
     <div class="film-grain" aria-hidden="true"></div>
 
@@ -35,6 +81,41 @@ import Scanner from '../components/Scanner';
             await reg.update();
             if (reg.waiting) reg.waiting.postMessage({ type: "SKIP_WAITING" });
           } catch {}
+        });
+      }
+
+      const form = document.getElementById("scan-login-form") as HTMLFormElement | null;
+      if (form) {
+        const errorBox = document.getElementById("login-error") as HTMLDivElement;
+        const submit = document.getElementById("login-submit") as HTMLButtonElement;
+        const passwordInput = document.getElementById("password") as HTMLInputElement;
+
+        form.addEventListener("submit", async (e) => {
+          e.preventDefault();
+          errorBox.classList.add("hidden");
+          submit.disabled = true;
+          submit.textContent = "Verificando...";
+          try {
+            const res = await fetch("/api/admin/login", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ password: passwordInput.value }),
+            });
+            const data = await res.json().catch(() => ({}));
+            if (res.ok && data.success) {
+              // Nos quedamos en /scan
+              window.location.href = "/scan";
+              return;
+            }
+            errorBox.textContent = data.error || "No se pudo iniciar sesión.";
+            errorBox.classList.remove("hidden");
+          } catch {
+            errorBox.textContent = "Error de conexión.";
+            errorBox.classList.remove("hidden");
+          } finally {
+            submit.disabled = false;
+            submit.textContent = "Entrar al scanner";
+          }
         });
       }
     </script>

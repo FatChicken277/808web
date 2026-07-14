@@ -70,7 +70,11 @@ import "../../styles/global.css";
           });
           const data = await res.json().catch(() => ({}));
           if (res.ok && data.success) {
-            window.location.href = "/admin";
+            const params = new URLSearchParams(window.location.search);
+            const next = params.get("next");
+            const safeNext =
+              next && next.startsWith("/") && !next.startsWith("//") ? next : "/admin";
+            window.location.href = safeNext;
             return;
           }
           errorBox.textContent = data.error || "No se pudo iniciar sesión.";

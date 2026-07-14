@@ -13,10 +13,8 @@ function isProtected(pathname: string): boolean {
   if (pathname.startsWith("/api/admin/")) {
     return pathname !== "/api/admin/login" && pathname !== "/api/admin/logout";
   }
-  // Scanner de check-in.
-  if (pathname === "/scan" || pathname.startsWith("/scan/")) {
-    return true;
-  }
+  // Scanner de check-in: la auth se maneja dentro de /scan para no sacar
+  // al usuario de la PWA (login embebido → vuelve al scanner).
   return false;
 }
 
@@ -57,7 +55,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
         headers: { "Content-Type": "application/json" },
       });
     }
-    return context.redirect("/admin/login");
+    return context.redirect(
+      `/admin/login?next=${encodeURIComponent(pathname + context.url.search)}`,
+    );
   }
 
   return next();
