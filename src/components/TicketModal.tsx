@@ -58,6 +58,11 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
       return;
     }
 
+    if (!formData.idType) {
+      setError('Selecciona el tipo de documento.');
+      return;
+    }
+
     if (formData.fullName.trim().length < 3) {
       setError('Por favor ingresa un nombre válido.');
       return;
@@ -70,6 +75,11 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
 
     if (!/^[0-9+\-\s]+$/.test(formData.phone) || formData.phone.length < 7) {
       setError('Por favor ingresa un número de celular válido.');
+      return;
+    }
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      setError('Por favor ingresa un correo electrónico válido.');
       return;
     }
 
@@ -123,7 +133,9 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                 <input
                   required
                   type="text"
-                  className="w-full bg-white/5 border border-white/10 p-2 text-white focus:border-white focus:outline-none"
+                  autoComplete="name"
+                  placeholder="Ej: Ana María Pérez"
+                  className="w-full bg-white/5 border border-white/10 p-2 text-white placeholder:text-white/30 focus:border-white focus:outline-none"
                   value={formData.fullName}
                   onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 />
@@ -132,6 +144,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                 <div className="w-1/3">
                   <label className="mb-1 block text-xs font-bold uppercase tracking-widest text-white/70">Tipo</label>
                   <select
+                    required
                     className="w-full bg-white/5 border border-white/10 p-2 text-white focus:border-white focus:outline-none appearance-none"
                     value={formData.idType}
                     onChange={(e) => setFormData({ ...formData, idType: e.target.value })}
@@ -146,7 +159,10 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                   <input
                     required
                     type="text"
-                    className="w-full bg-white/5 border border-white/10 p-2 text-white focus:border-white focus:outline-none"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    placeholder="Ej: 1234567890"
+                    className="w-full bg-white/5 border border-white/10 p-2 text-white placeholder:text-white/30 focus:border-white focus:outline-none"
                     value={formData.cedula}
                     onChange={(e) => setFormData({ ...formData, cedula: e.target.value })}
                   />
@@ -157,7 +173,9 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                 <input
                   required
                   type="tel"
-                  className="w-full bg-white/5 border border-white/10 p-2 text-white focus:border-white focus:outline-none"
+                  autoComplete="tel"
+                  placeholder="Ej: 3001234567"
+                  className="w-full bg-white/5 border border-white/10 p-2 text-white placeholder:text-white/30 focus:border-white focus:outline-none"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 />
@@ -167,7 +185,9 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                 <input
                   required
                   type="email"
-                  className="w-full bg-white/5 border border-white/10 p-2 text-white focus:border-white focus:outline-none"
+                  autoComplete="email"
+                  placeholder="Ej: correo@email.com"
+                  className="w-full bg-white/5 border border-white/10 p-2 text-white placeholder:text-white/30 focus:border-white focus:outline-none"
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />
