@@ -1,5 +1,5 @@
 /* 808 Fest Check-in PWA — cachea /scan y assets para uso sin red */
-const CACHE_VERSION = '808-scan-v4';
+const CACHE_VERSION = '808-scan-v5';
 const PRECACHE = [
   '/scan',
   '/manifest.webmanifest',

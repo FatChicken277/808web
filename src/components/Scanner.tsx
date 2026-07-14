@@ -273,7 +273,7 @@ export default function Scanner() {
     };
   }, []);
 
-  // Arranca la cámara directo (sin botón del lib que el overlay tapaba)
+  // Arranca la cámara con fallbacks (PC = webcam "user"; móvil = trasera)
   useEffect(() => {
     let disposed = false;
     let scanner: Html5Qrcode | null = null;
@@ -285,40 +285,84 @@ export default function Scanner() {
         return;
       }
 
-      // Asegurar tamaño explícito para el decoder
       const size = Math.max(240, Math.floor(el.clientWidth || Math.min(window.innerWidth - 32, 420)));
-      el.style.width = `${size}px`;
-      el.style.height = `${size}px`;
+      el.style.width = '100%';
+      el.style.height = '100%';
 
       scanner = new Html5Qrcode('qr-reader', { verbose: false });
 
-      let cameraConfig: string | MediaTrackConstraints = { facingMode: 'environment' };
+      const candidates: Array<string | MediaTrackConstraints> = [];
       try {
         const cameras = await Html5Qrcode.getCameras();
-        if (!cameras.length) throw new Error('No cameras');
-        const back =
-          cameras.find((c) => /back|rear|environment|trasera|posterior/i.test(c.label)) ||
-          cameras[cameras.length - 1];
-        if (back?.id) cameraConfig = back.id;
+        const back = cameras.find((c) =>
+          /back|rear|environment|trasera|posterior/i.test(c.label),
+        );
+        const front = cameras.find((c) =>
+          /front|user|face|frontal/i.test(c.label),
+        );
+
+        // En PC casi siempre es frontal; en móvil preferimos trasera.
+        const isMobile = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+        if (isMobile) {
+          if (back?.id) candidates.push(back.id);
+          if (front?.id) candidates.push(front.id);
+        } else {
+          if (front?.id) candidates.push(front.id);
+          if (back?.id) candidates.push(back.id);
+        }
+        for (const cam of cameras) {
+          if (cam.id && !candidates.includes(cam.id)) candidates.push(cam.id);
+        }
       } catch {
-        // fallback facingMode
+        // sin listado de cámaras
       }
 
-      const box = Math.floor(size * 0.72);
-
-      await scanner.start(
-        cameraConfig,
-        {
-          fps: 12,
-          qrbox: { width: box, height: box },
-          aspectRatio: 1,
-          disableFlip: false,
-        },
-        (decodedText) => {
-          if (!disposed) processScanRef.current(decodedText);
-        },
-        () => {},
+      candidates.push(
+        { facingMode: { ideal: 'environment' } },
+        { facingMode: 'user' },
+        { facingMode: 'environment' },
       );
+
+      const box = Math.min(250, Math.floor(size * 0.7));
+      const scanConfig = {
+        fps: 10,
+        qrbox: { width: box, height: box },
+        // No forzar aspectRatio: rompe muchas webcams de PC
+        disableFlip: false,
+      };
+
+      let started = false;
+      let lastError: unknown = null;
+
+      for (const camera of candidates) {
+        if (disposed) return;
+        try {
+          if (scanner.isScanning) {
+            await scanner.stop().catch(() => {});
+          }
+          await scanner.start(
+            camera,
+            scanConfig,
+            (decodedText) => {
+              if (!disposed) processScanRef.current(decodedText);
+            },
+            () => {},
+          );
+          started = true;
+          break;
+        } catch (err) {
+          lastError = err;
+          try {
+            if (scanner.isScanning) await scanner.stop();
+          } catch {
+            // ignore
+          }
+        }
+      }
+
+      if (!started) {
+        throw lastError || new Error('No camera config worked');
+      }
 
       const video = el.querySelector('video') as HTMLVideoElement | null;
       if (video) {
@@ -336,29 +380,33 @@ export default function Scanner() {
       }
     };
 
-    start().catch((err: any) => {
-      if (disposed) return;
-      const msg = String(err?.message || err || '');
-      setCameraError(
-        /NotAllowed|Permission|denied/i.test(msg)
-          ? 'Permite el acceso a la cámara y pulsa Reintentar.'
-          : 'No se pudo iniciar la cámara. Pulsa Reintentar.',
-      );
-      setCameraReady(false);
-    });
+    // Pequeño delay: evita carrera de React Strict Mode (stop/start)
+    const boot = window.setTimeout(() => {
+      start().catch((err: any) => {
+        if (disposed) return;
+        const msg = String(err?.message || err || '');
+        setCameraError(
+          /NotAllowed|Permission|denied/i.test(msg)
+            ? 'Permite el acceso a la cámara y pulsa Reintentar.'
+            : 'No se pudo iniciar la cámara. Pulsa Reintentar.',
+        );
+        setCameraReady(false);
+      });
+    }, 150);
 
     return () => {
       disposed = true;
+      window.clearTimeout(boot);
       if (resultTimerRef.current) clearTimeout(resultTimerRef.current);
       if (unlockTimerRef.current) clearTimeout(unlockTimerRef.current);
-      if (scanner?.isScanning) {
-        scanner
-          .stop()
-          .then(() => scanner?.clear())
+      const s = scanner;
+      if (s?.isScanning) {
+        s.stop()
+          .then(() => s.clear())
           .catch(() => {});
-      } else {
+      } else if (s) {
         try {
-          scanner?.clear();
+          s.clear();
         } catch {
           // ignore
         }
