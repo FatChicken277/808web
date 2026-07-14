@@ -18,6 +18,7 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successData, setSuccessData] = useState<{ token: string; qrSvg: string } | null>(null);
+  const [refCodeLocked, setRefCodeLocked] = useState(false);
 
   // When modal opens, disable the halation filter so position:fixed works correctly
   useEffect(() => {
@@ -36,14 +37,16 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
     };
   }, [isOpen]);
 
-  // Precarga el código de artista desde la URL (?ref=CODIGO) al abrir el modal.
+  // Precarga el código de artista desde la URL (?ref=CODIGO) y lo deja fijo.
   useEffect(() => {
     if (!isOpen) return;
     const ref = new URLSearchParams(window.location.search).get('ref');
     if (ref) {
-      setFormData((prev) =>
-        prev.refCode ? prev : { ...prev, refCode: ref.trim().toUpperCase() }
-      );
+      const code = ref.trim().toUpperCase();
+      setFormData((prev) => ({ ...prev, refCode: code }));
+      setRefCodeLocked(true);
+    } else {
+      setRefCodeLocked(false);
     }
   }, [isOpen]);
 
@@ -193,13 +196,23 @@ export default function TicketModal({ isOpen, onClose }: TicketModalProps) {
                 />
               </div>
               <div>
-                <label className="mb-1 block text-xs font-bold uppercase tracking-widest text-white/70">Código de Artista <span className="text-white/40">(opcional)</span></label>
+                <label className="mb-1 block text-xs font-bold uppercase tracking-widest text-white/70">
+                  Código de Artista{' '}
+                  <span className="text-white/40">
+                    {refCodeLocked ? '(desde tu enlace)' : '(opcional)'}
+                  </span>
+                </label>
                 <input
                   type="text"
+                  disabled={refCodeLocked}
+                  readOnly={refCodeLocked}
                   placeholder="Si un artista te invitó, ingresa su código"
-                  className="w-full bg-white/5 border border-white/10 p-2 text-white placeholder:text-white/30 focus:border-white focus:outline-none uppercase"
+                  className="w-full bg-white/5 border border-white/10 p-2 text-white placeholder:text-white/30 focus:border-white focus:outline-none uppercase disabled:cursor-not-allowed disabled:opacity-60 disabled:border-white/5"
                   value={formData.refCode}
-                  onChange={(e) => setFormData({ ...formData, refCode: e.target.value.toUpperCase() })}
+                  onChange={(e) => {
+                    if (refCodeLocked) return;
+                    setFormData({ ...formData, refCode: e.target.value.toUpperCase() });
+                  }}
                 />
               </div>
               <div className="mt-2 flex items-start gap-2">
