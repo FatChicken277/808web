@@ -1,0 +1,440 @@
+---
+import { getDb } from '../../db';
+import { tickets } from '../../db/schema';
+import { eq } from 'drizzle-orm';
+// @ts-ignore
+import { env } from 'cloudflare:workers';
+import '../../styles/global.css';
+
+const { token } = Astro.params;
+
+let ticket: any = null;
+let errorMsg = '';
+
+if (!token) {
+  errorMsg = 'Token no proporcionado.';
+} else {
+  try {
+    const db = getDb((env as any) || process.env);
+    const result = await db.select().from(tickets).where(eq(tickets.qr_token, token)).limit(1);
+    if (result.length === 0) {
+      errorMsg = 'Ticket no encontrado.';
+    } else {
+      ticket = result[0];
+    }
+  } catch (e: any) {
+    errorMsg = 'Error al buscar el ticket.';
+  }
+}
+
+const createdDate = ticket?.created_at
+  ? new Date(ticket.created_at).toLocaleDateString('es-CO', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  : '';
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <title>{ticket ? `Ticket de ${ticket.full_name} — 808 FEST` : '808 FEST — Ticket'}</title>
+    <meta name="description" content="Tu ticket digital para 808 Fest. Muestra este QR en la entrada del evento." />
+  </head>
+  <body>
+    <div class="ticket-page">
+      {errorMsg ? (
+        <div class="ticket-card error-card">
+          <div class="logo">808</div>
+          <div class="error-icon">✕</div>
+          <h1 class="error-title">{errorMsg}</h1>
+          <p class="error-desc">
+            El ticket que buscas no existe o el enlace es inválido.
+          </p>
+          <a href="/" class="back-link">← Volver al inicio</a>
+        </div>
+      ) : (
+        <div class="ticket-card">
+          <div class="ticket-header">
+            <div class="logo">808</div>
+            <div class="badge">FEST</div>
+          </div>
+
+          <div class="divider-dashed"></div>
+
+          <div class="qr-section">
+            <div class="qr-container">
+              <img
+                src={`/api/qr/${token}`}
+                alt="Código QR del ticket"
+                width="220"
+                height="220"
+                loading="eager"
+              />
+            </div>
+            <p class="qr-hint">Muestra este código QR en la entrada</p>
+          </div>
+
+          <div class="divider-dashed"></div>
+
+          <div class="info-section">
+            <div class="info-row">
+              <span class="info-label">Nombre</span>
+              <span class="info-value">{ticket.full_name}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">{ticket.id_type || 'Documento'}</span>
+              <span class="info-value">{ticket.cedula}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Fecha Registro</span>
+              <span class="info-value">{createdDate}</span>
+            </div>
+            {ticket.attended && (
+              <div class="attended-badge">
+                <span class="check-icon">✓</span> YA INGRESÓ AL EVENTO
+              </div>
+            )}
+          </div>
+
+          <div class="ticket-footer">
+            <span class="token-display">{token}</span>
+          </div>
+        </div>
+      )}
+
+      <div class="page-footer">
+        <a href="/" class="home-link">el808fest.com</a>
+      </div>
+    </div>
+
+    <!-- Animated Film Grain -->
+    <div class="film-grain"></div>
+
+    <style is:global>
+      @keyframes grain-animation {
+        0%, 100% { transform: translate(0, 0); }
+        10% { transform: translate(-5%, -5%); }
+        20% { transform: translate(-10%, 5%); }
+        30% { transform: translate(5%, -10%); }
+        40% { transform: translate(-5%, 15%); }
+        50% { transform: translate(-10%, 5%); }
+        60% { transform: translate(15%, 0); }
+        70% { transform: translate(0, 10%); }
+        80% { transform: translate(-15%, 0); }
+        90% { transform: translate(10%, 5%); }
+      }
+
+      .film-grain {
+        position: fixed;
+        top: -50%;
+        left: -50%;
+        right: -50%;
+        bottom: -50%;
+        width: 200%;
+        height: 200%;
+        pointer-events: none;
+        z-index: 9999;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        background-repeat: repeat;
+        background-size: 650px 650px;
+        opacity: 0.1;
+        mix-blend-mode: hard-light;
+        animation: grain-animation 0.4s steps(4) infinite;
+      }
+    </style>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #000;
+        color: #fff;
+        font-family: 'Courier New', 'Courier', monospace;
+        min-height: 100vh;
+      }
+
+      .ticket-page {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px;
+        filter: drop-shadow(0 0 12px rgba(255, 60, 0, 0.4)) contrast(1.05) saturate(1.4) brightness(0.95);
+      }
+
+      /* ── Ticket Card ── */
+      .ticket-card {
+        width: 100%;
+        max-width: 420px;
+        background: linear-gradient(145deg, #0a0a0a, #111111);
+        border: 1px solid rgba(57, 255, 20, 0.2);
+        padding: 32px 28px;
+        position: relative;
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      .ticket-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #39FF14, transparent);
+      }
+
+      .ticket-card::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #39FF14, transparent);
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* ── Header ── */
+      .ticket-header {
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        gap: 12px;
+        margin-bottom: 8px;
+      }
+
+      .logo {
+        font-size: 48px;
+        font-weight: 900;
+        letter-spacing: -3px;
+        color: #39FF14;
+        text-shadow: 0 0 30px rgba(57, 255, 20, 0.5), 0 0 60px rgba(57, 255, 20, 0.2);
+        line-height: 1;
+      }
+
+      .badge {
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 6px;
+        color: #fff;
+        opacity: 0.7;
+        text-transform: uppercase;
+      }
+
+      /* ── Dividers ── */
+      .divider-dashed {
+        border: none;
+        border-top: 1px dashed rgba(255, 255, 255, 0.15);
+        margin: 20px 0;
+      }
+
+      /* ── QR Section ── */
+      .qr-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .qr-container {
+        background: #ffffff;
+        padding: 16px;
+        border-radius: 12px;
+        display: inline-flex;
+        box-shadow: 0 0 40px rgba(57, 255, 20, 0.1);
+      }
+
+      .qr-container img {
+        display: block;
+        width: 220px;
+        height: 220px;
+        image-rendering: pixelated;
+      }
+
+      .qr-hint {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        color: rgba(255, 255, 255, 0.4);
+        text-align: center;
+      }
+
+      /* ── Info Section ── */
+      .info-section {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+      }
+
+      .info-label {
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: rgba(255, 255, 255, 0.4);
+        flex-shrink: 0;
+      }
+
+      .info-value {
+        font-size: 14px;
+        font-weight: 700;
+        color: #fff;
+        text-align: right;
+        text-transform: uppercase;
+        word-break: break-word;
+      }
+
+      /* ── Attended Badge ── */
+      .attended-badge {
+        margin-top: 8px;
+        background: rgba(57, 255, 20, 0.1);
+        border: 1px solid rgba(57, 255, 20, 0.3);
+        padding: 10px 16px;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #39FF14;
+      }
+
+      .check-icon {
+        font-size: 14px;
+      }
+
+      /* ── Footer / Token ── */
+      .ticket-footer {
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        text-align: center;
+      }
+
+      .token-display {
+        font-size: 9px;
+        letter-spacing: 1px;
+        color: rgba(255, 255, 255, 0.2);
+        word-break: break-all;
+      }
+
+      /* ── Error Card ── */
+      .error-card {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .error-icon {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 60, 60, 0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: #ff3c3c;
+      }
+
+      .error-title {
+        font-size: 18px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #ff3c3c;
+      }
+
+      .error-desc {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.5);
+        line-height: 1.6;
+      }
+
+      .back-link {
+        display: inline-block;
+        margin-top: 8px;
+        color: #39FF14;
+        text-decoration: none;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: opacity 0.2s ease;
+      }
+
+      .back-link:hover {
+        opacity: 0.7;
+      }
+
+      /* ── Page Footer ── */
+      .page-footer {
+        margin-top: 32px;
+        text-align: center;
+      }
+
+      .home-link {
+        color: rgba(255, 255, 255, 0.25);
+        text-decoration: none;
+        font-size: 11px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        transition: color 0.2s ease;
+      }
+
+      .home-link:hover {
+        color: #39FF14;
+      }
+
+      /* ── Responsive ── */
+      @media (max-width: 480px) {
+        .ticket-card {
+          padding: 24px 20px;
+        }
+
+        .logo {
+          font-size: 40px;
+        }
+
+        .qr-container img {
+          width: 180px;
+          height: 180px;
+        }
+
+        .info-value {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </body>
+</html>
