@@ -72,7 +72,6 @@ export default function ArtistsSection({ artists = [] }: { artists?: any[] }) {
         </div>
       </div>
 
-      {/* Horizontal Scroll Area / Desktop Grid */}
       <div
         ref={scrollRef}
         className="flex gap-6 overflow-x-auto lg:grid lg:grid-cols-4 xl:grid-cols-5 lg:overflow-visible lg:snap-none snap-x snap-mandatory pb-24 lg:pb-12 pt-8 scroll-smooth no-scrollbar pl-6 md:pl-12 lg:px-12 scroll-pl-6 md:scroll-pl-12 lg:scroll-pl-0"
@@ -99,6 +98,8 @@ export default function ArtistsSection({ artists = [] }: { artists?: any[] }) {
             "group-hover:rotate-3",
           ];
           const randomRotation = rotations[idx % rotations.length];
+          const isMain = artist.order === 1 || artist.order === 2 || (!artist.order && idx < 2);
+          const isPurple = artist.order === 3 || artist.order === 4 || artist.order === 5 || (artist.name && artist.name.toLowerCase().includes("machado")) || (artist.name && artist.name.toLowerCase().includes("manchado"));
 
           return (
             <a
@@ -114,13 +115,31 @@ export default function ArtistsSection({ artists = [] }: { artists?: any[] }) {
             >
               {/* Apple-style Animated Border Wrapper */}
               <div
-                className={`relative w-full rounded-xl p-[2px] transition-all duration-500 ${randomRotation} group-hover:scale-[1.05] group-hover:z-50 group-hover:shadow-[0_20px_50px_rgba(162,49,244,0.4)] overflow-hidden`}
+                className={`relative w-full rounded-xl p-[2px] transition-all duration-500 ${randomRotation} group-hover:scale-[1.05] group-hover:z-50 overflow-hidden ${
+                  isMain
+                    ? "shadow-[0_0_30px_rgba(57,255,20,0.4)] group-hover:shadow-[0_0_50px_rgba(57,255,20,0.6)]"
+                    : isPurple
+                    ? "shadow-[0_0_20px_rgba(162,49,244,0.4)] group-hover:shadow-[0_0_40px_rgba(162,49,244,0.6)]"
+                    : "group-hover:shadow-[0_20px_50px_rgba(162,49,244,0.4)]"
+                }`}
               >
-                {/* Default border */}
-                <div className="absolute inset-0 bg-white/10 group-hover:opacity-0 transition-opacity duration-500"></div>
+                {/* Default static border */}
+                <div
+                  className={`absolute inset-0 transition-opacity duration-500 ${
+                    isMain
+                      ? "opacity-0" // Main doesn't need static border, it's always animated
+                      : isPurple
+                      ? "bg-gradient-to-br from-[#a231f4] to-[#601899] opacity-80 group-hover:opacity-0"
+                      : "bg-white/10 group-hover:opacity-0"
+                  }`}
+                ></div>
 
                 {/* Animated Rainbow border (808 colors: purple & green) */}
-                <div className="absolute -inset-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#9333ea_0%,#39FF14_25%,#9333ea_50%,#39FF14_75%,#9333ea_100%)]"></div>
+                <div
+                  className={`absolute -inset-full transition-opacity duration-500 animate-[spin_4s_linear_infinite] bg-[conic-gradient(from_90deg_at_50%_50%,#9333ea_0%,#39FF14_25%,#9333ea_50%,#39FF14_75%,#9333ea_100%)] ${
+                    isMain ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                  }`}
+                ></div>
 
                 {/* Inner Content Wrapper */}
                 <div
@@ -128,7 +147,7 @@ export default function ArtistsSection({ artists = [] }: { artists?: any[] }) {
                 >
                   {/* Artist Header */}
                   <div className="p-3 flex justify-between items-center bg-black border-b border-white/10 shrink-0">
-                    <span className="text-[11px] font-bold uppercase tracking-tight truncate pr-2">
+                    <span className={`text-[11px] font-bold uppercase tracking-tight truncate pr-2 ${isMain ? "text-[#39FF14]" : ""} ${isPurple ? "text-[#a231f4]" : ""}`}>
                       {artist.name}
                     </span>
                     <div className="text-white group-hover:text-purple-400 transition-colors">
