@@ -139,14 +139,16 @@ function findTicketByEmail(email) {
   try {
     const query = `SELECT full_name, email, qr_token FROM tickets WHERE LOWER(TRIM(email)) = '${email.trim().toLowerCase()}' LIMIT 1;`;
     const cmd = `npx wrangler d1 execute 808web-db --remote --json --command="${query}"`;
-    const output = execSync(cmd, { encoding: "utf-8", stdio: ["pipe", "pipe", "ignore"] });
+    const output = execSync(cmd, { encoding: "utf-8" });
     const parsed = JSON.parse(output);
     const results = parsed[0]?.results || [];
     if (results.length > 0) {
       return results[0];
     }
   } catch (e) {
-    // Si falla wrangler, continúa con los datos proporcionados
+    if (e.message && e.message.includes("Not logged in")) {
+      console.warn("⚠️ Wrangler no está autenticado. Ejecuta 'npx wrangler login' en la terminal.");
+    }
   }
   return null;
 }
