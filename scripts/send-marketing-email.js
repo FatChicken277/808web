@@ -47,9 +47,10 @@ const options = {
   token: null, // qr_token del ticket
   all: false,
   dryRun: false,
-  subject: "⚡ ¡ESTE DOMINGO 06 DE SEPTIEMBRE ES 808 FEST! - Horarios y Recomendaciones",
+  subject: "🔥 ¡ESTE DOMINGO 06 DE SEPTIEMBRE ES 808 FEST! - Horarios y Recomendaciones 🔥",
   title: "¡ESTE DOMINGO NOS VEMOS EN EL 808 FEST!",
   flyerUrl: "https://www.el808fest.com/images/flyer.png",
+  menoresUrl: "https://www.el808fest.com/images/menores.png",
   location: "Teatro Carlos Vieco, Medellín",
   date: "Domingo 06 de Septiembre",
   schedule: "Abre a las 12:00 PM – Termina a las 10:00 PM",
@@ -81,6 +82,8 @@ for (let i = 0; i < args.length; i++) {
     options.message = args[++i];
   } else if (arg === "--flyer" || arg === "--flyer-url") {
     options.flyerUrl = args[++i];
+  } else if (arg === "--menores" || arg === "--menores-url") {
+    options.menoresUrl = args[++i];
   } else if (arg === "--location") {
     options.location = args[++i];
   } else if (arg === "--date") {
@@ -121,13 +124,13 @@ DETALLES DEL EVENTO:
   --schedule <horario>      Horario del evento (default: "Abre a las 12:00 PM – Termina a las 10:00 PM").
   --location <lugar>        Ubicación del evento (default: "Teatro Carlos Vieco, Medellín").
   --flyer <url_imagen>      URL del flyer oficial.
+  --menores <url_imagen>    URL del banner/imagen de menores.
 
 PERSONALIZACIÓN DEL CONTENIDO:
   --subject <asunto>        Asunto del correo.
   --title <título>          Título principal dentro del diseño.
   --message <texto>         Cuerpo del mensaje.
   --button-text <texto>     Texto del botón CTA.
-  --button-url <url>        Enlace del botón CTA (si no hay token).
 `);
 }
 
@@ -149,7 +152,7 @@ function findTicketByEmail(email) {
 }
 
 // Generador de plantilla HTML estilizada
-function generateHtmlTemplate({ fullName, title, message, flyerUrl, location, date, schedule, buttonText, qrToken }) {
+function generateHtmlTemplate({ fullName, title, message, flyerUrl, menoresUrl, location, date, schedule, buttonText, qrToken }) {
   const safeName = (fullName || "Fan de 808")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -258,7 +261,7 @@ function generateHtmlTemplate({ fullName, title, message, flyerUrl, location, da
                           <strong style="color: #39FF14; font-size: 14px;">🎟️ TU TICKET:</strong>
                           <span style="color: #FFFFFF; font-size: 14px; margin-left: 6px;">
                             <a href="${ticketUrl}" style="color: #39FF14; text-decoration: underline; font-weight: 700;">
-                              ${qrToken ? `Abrir mi ticket (el808fest.com/ticket/${qrToken})` : 'Abrir mi ticket en la web'}
+                              Abrir mi ticket oficial →
                             </a>
                           </span>
                         </td>
@@ -267,6 +270,24 @@ function generateHtmlTemplate({ fullName, title, message, flyerUrl, location, da
                   </td>
                 </tr>
               </table>
+
+              <!-- Imagen Informativa de Menores de Edad -->
+              ${
+                menoresUrl
+                  ? `
+              <div style="margin: 30px 0 20px 0; text-align: center;">
+                <a href="${ticketUrl}" target="_blank" style="display: block; text-decoration: none;">
+                  <img 
+                    src="${menoresUrl}" 
+                    alt="Información Importante Menores de Edad" 
+                    width="550" 
+                    style="width: 100%; max-width: 550px; height: auto; border-radius: 12px; display: block; border: 1px solid #2b3b28; box-shadow: 0 6px 20px rgba(0,0,0,0.5);" 
+                  />
+                </a>
+              </div>
+              `
+                  : ""
+              }
 
               <!-- Recomendaciones Importantes -->
               <div style="margin: 20px 0; padding: 18px; background-color: #121811; border-left: 3px solid #39FF14; border-radius: 4px;">
@@ -287,9 +308,6 @@ function generateHtmlTemplate({ fullName, title, message, flyerUrl, location, da
                 <a href="${ticketUrl}" style="background-color: #39FF14; color: #000000; font-size: 15px; font-weight: 900; text-decoration: none; padding: 16px 36px; border-radius: 50px; display: inline-block; letter-spacing: 1.5px; text-transform: uppercase; box-shadow: 0 4px 20px rgba(57, 255, 20, 0.4);">
                   ${buttonText}
                 </a>
-                <p style="margin: 12px 0 0 0; font-size: 12px; color: #888888;">
-                  Enlace directo: <a href="${ticketUrl}" style="color: #39FF14; text-decoration: none;">${ticketUrl}</a>
-                </p>
               </div>
 
             </td>
@@ -340,28 +358,6 @@ function getRecipientsFromD1() {
 // Función auxiliar para pausas
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
-// Preparar attachment si existe el flyer localmente
-function getFlyerAttachment() {
-  const possiblePaths = [
-    path.resolve(process.cwd(), "public/flyer.png"),
-    path.resolve(process.cwd(), "public/images/flyer.png"),
-  ];
-
-  for (const p of possiblePaths) {
-    if (fs.existsSync(p)) {
-      try {
-        return {
-          filename: "flyer.png",
-          content: fs.readFileSync(p),
-        };
-      } catch (e) {
-        // Ignorar si falla lectura
-      }
-    }
-  }
-  return null;
-}
-
 async function main() {
   if (!options.to && !options.all) {
     console.error("❌ ERROR: Debes especificar al menos un destinatario (--to email) o el modo masivo (--all).");
@@ -378,7 +374,6 @@ async function main() {
   }
 
   const resend = apiKey ? new Resend(apiKey) : null;
-  const flyerAttachment = getFlyerAttachment();
 
   // CASO 1: Envío individual de prueba
   if (options.to) {
@@ -414,7 +409,8 @@ async function main() {
     console.log(`- Horario      : ${options.schedule}`);
     console.log(`- Ubicación    : ${options.location}`);
     console.log(`- Ticket URL   : ${ticketUrl}`);
-    console.log(`- Flyer        : ${options.flyerUrl}`);
+    console.log(`- Flyer URL    : ${options.flyerUrl}`);
+    console.log(`- Menores URL  : ${options.menoresUrl}`);
 
     let htmlContent = "";
     if (options.templateFile && fs.existsSync(options.templateFile)) {
@@ -427,6 +423,7 @@ async function main() {
         title: options.title,
         message: options.message,
         flyerUrl: options.flyerUrl,
+        menoresUrl: options.menoresUrl,
         location: options.location,
         date: options.date,
         schedule: options.schedule,
@@ -520,6 +517,7 @@ async function main() {
           title: options.title,
           message: options.message,
           flyerUrl: options.flyerUrl,
+          menoresUrl: options.menoresUrl,
           location: options.location,
           date: options.date,
           schedule: options.schedule,
