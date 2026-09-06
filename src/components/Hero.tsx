@@ -1,7 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import TicketModal from "./TicketModal";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, MapPin } from "lucide-react";
+
+// Registro en linea: cambiar a `true` para reabrir el formulario de tickets.
+const REGISTRATION_OPEN = false;
 
 export default function Hero({
   video = "/video/video.avif",
@@ -124,13 +127,44 @@ export default function Hero({
 
               {/* Action Box */}
               <div className="w-full flex flex-col gap-3 mt-8">
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="relative group w-full overflow-hidden bg-[#39FF14] text-black text-sm md:text-base font-black uppercase tracking-widest py-3 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.3)] hover:shadow-[0_0_25px_rgba(57,255,20,0.6)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-                >
-                  <span className="relative z-10 group-hover:text-black transition-colors duration-300">OBTENER TICKETS</span>
-                  <div className="absolute inset-0 bg-white scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></div>
-                </button>
+                {REGISTRATION_OPEN ? (
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="relative group w-full overflow-hidden bg-[#39FF14] text-black text-sm md:text-base font-black uppercase tracking-widest py-3 rounded-lg shadow-[0_0_15px_rgba(57,255,20,0.3)] hover:shadow-[0_0_25px_rgba(57,255,20,0.6)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                  >
+                    <span className="relative z-10 group-hover:text-black transition-colors duration-300">OBTENER TICKETS</span>
+                    <div className="absolute inset-0 bg-white scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300 ease-out"></div>
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      disabled
+                      aria-disabled="true"
+                      className="w-full bg-white/10 text-white/50 text-sm md:text-base font-black uppercase tracking-widest py-3 rounded-lg border border-white/15 cursor-not-allowed select-none"
+                    >
+                      REGISTRO EN LÍNEA CERRADO
+                    </button>
+                    <div
+                      role="status"
+                      className="flex items-start gap-2.5 rounded-lg border border-white/15 bg-black/40 backdrop-blur-md px-4 py-3 text-left"
+                    >
+                      <MapPin
+                        size={16}
+                        className="mt-0.5 shrink-0 text-[#39FF14]"
+                        aria-hidden="true"
+                      />
+                      <p className="text-[11px] md:text-xs leading-relaxed text-white/75">
+                        El registro en línea se encuentra cerrado. Si deseas
+                        asistir, acércate al lugar del evento y completa tu
+                        registro en la entrada.{" "}
+                        <span className="font-bold text-[#39FF14]">
+                          El ingreso es gratuito.
+                        </span>
+                      </p>
+                    </div>
+                  </>
+                )}
                 <div className="flex w-full gap-3">
                   <a
                     href="#artistas"
