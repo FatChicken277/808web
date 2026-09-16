@@ -50,7 +50,7 @@ const options = {
   name: "Familia 808",
   all: false,
   dryRun: false,
-  subject: "🔥 ÚLTIMAS UNIDADES: Tenis Oficiales 808 Fest x CIRKUS — Stock Limitado 🚨",
+  subject: "🔥 {{name}}, última oportunidad: Tenis Oficiales 808 Fest x CIRKUS 🔥",
   shopUrl: SHOP_URL,
   delayMs: 350,
 };
@@ -122,18 +122,18 @@ function generateCirkusPlainText({ fullName, shopUrl }) {
   return `
 Hola ${name},
 
-Te escribimos este aviso prioritario antes de vernos en el 808 Fest:
+Te escribimos este aviso importante antes de vernos en el 808 Fest:
 
-Acabamos de liberar de forma oficial la edición limitada de los tenis 808 FEST x CIRKUS. 
+Esta es tu última oportunidad para ordenar la edición exclusiva de los tenis 808 FEST x CIRKUS.
 
-Debido a que la producción fue estrictamente limitada, quedan muy pocas unidades disponibles y queremos que los asistentes registrados tengan la prioridad antes de que se agoten por completo.
+Queremos que los asistentes registrados tengan la prioridad de asegurar su par antes de que cierre la ventana de pedidos de esta colaboración histórica.
 
-Puedes ver los detalles y asegurar tu talla directamente en la tienda oficial:
+Puedes ver los detalles y ordenar tu talla directamente en la tienda oficial:
 ${purchaseUrl}
 
 Detalles clave:
 - Colaboración Oficial 808 Fest x CIRKUS
-- Stock estrictamente limitado (sin reposición)
+- Última oportunidad de orden antes del festival
 - Envíos a todo el país
 
 Asegura los tuyos ahora:
@@ -177,7 +177,7 @@ function generateCirkusHtmlTemplate({ fullName, shopUrl }) {
             <td style="padding: 38px 25px 26px 25px; text-align: center; background: radial-gradient(circle at center, #1b3d14 0%, #0a0a0a 85%); border-bottom: 1px solid #1a2a17;">
               <div style="display: inline-block; background-color: rgba(57, 255, 20, 0.12); border: 1px solid #39FF14; border-radius: 30px; padding: 6px 18px; margin-bottom: 14px;">
                 <span style="font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #39FF14; text-transform: uppercase;">
-                  ⚡ DROP EXCLUSIVO • EDICIÓN LIMITADA ⚡
+                  🔥 DROP EXCLUSIVO • ÚLTIMA OPORTUNIDAD 🔥
                 </span>
               </div>
               <h1 style="margin: 0; font-size: 34px; font-weight: 900; letter-spacing: 3px; color: #FFFFFF; text-transform: uppercase;">
@@ -202,7 +202,7 @@ function generateCirkusHtmlTemplate({ fullName, shopUrl }) {
                 Para conmemorar esta edición de <strong>808 Fest</strong>, nos unimos junto a <strong style="color: #FFFFFF;">CIRKUS</strong> para crear una pieza de colección exclusiva: los tenis oficiales del festival.
               </p>
               <p style="margin: 0 0 25px 0; font-size: 14px; line-height: 1.6; color: #999999;">
-                Diseñados con materiales de alta calidad, silueta urbana y toda la identidad del festival. <em>Unidades estrictamente limitadas hasta agotar existencias.</em>
+                Esta es tu <strong style="color: #39FF14;">última oportunidad</strong> para ordenar tu par antes de la fecha del evento. Diseñados con materiales de alta calidad, silueta urbana y toda la identidad del festival.
               </p>
             </td>
           </tr>
@@ -280,14 +280,14 @@ function generateCirkusHtmlTemplate({ fullName, shopUrl }) {
                         <td style="padding-bottom: 10px;">
                           <span style="font-size: 16px;">🔥</span>
                           <strong style="color: #FFFFFF; font-size: 14px; margin-left: 8px;">Colaboración Oficial 808 Fest x CIRKUS</strong>
-                          <p style="margin: 3px 0 0 28px; font-size: 12px; color: #888888;">Edición especial de colección del festival.</p>
+                          <p style="margin: 3px 0 0 28px; font-size: 12px; color: #888888;">Edición conmemorativa de colección del festival.</p>
                         </td>
                       </tr>
                       <tr>
                         <td style="padding-bottom: 10px;">
-                          <span style="font-size: 16px;">⚡</span>
-                          <strong style="color: #FFFFFF; font-size: 14px; margin-left: 8px;">Stock Limitado</strong>
-                          <p style="margin: 3px 0 0 28px; font-size: 12px; color: #888888;">Unidades exclusivas hasta agotar existencias.</p>
+                          <span style="font-size: 16px;">⏳</span>
+                          <strong style="color: #FFFFFF; font-size: 14px; margin-left: 8px;">Última Oportunidad</strong>
+                          <p style="margin: 3px 0 0 28px; font-size: 12px; color: #888888;">Ordena tu par antes del cierre de pedidos del festival.</p>
                         </td>
                       </tr>
                       <tr>
@@ -384,8 +384,8 @@ async function main() {
 
     // Asunto urgente y personalizado si no se especificó uno por argumento
     const subject = args.includes("--subject")
-      ? options.subject
-      : `⚠️ [Aviso Urgente] ${firstName}: Quedan muy pocos pares 808 Fest x CIRKUS`;
+      ? options.subject.replace(/\{\{name\}\}/g, firstName)
+      : `🔥 ${firstName}, última oportunidad: Tenis Oficiales 808 Fest x CIRKUS 🔥`;
 
     console.log(`\n======================================================`);
     console.log(`🧪 ENVIANDO CORREO DE PRUEBA SNEAKERS A: ${options.to}`);
@@ -476,8 +476,8 @@ async function main() {
       const firstName = name.split(" ")[0] || "Amigo/a";
 
       const subject = args.includes("--subject")
-        ? options.subject
-        : `⚠️ [Aviso Urgente] ${firstName}: Quedan muy pocos pares 808 Fest x CIRKUS`;
+        ? options.subject.replace(/\{\{name\}\}/g, firstName)
+        : `🔥 ${firstName}, última oportunidad: Tenis Oficiales 808 Fest x CIRKUS 🔥`;
 
       const htmlContent = generateCirkusHtmlTemplate({
         fullName: name,
