@@ -48,7 +48,7 @@ const options = {
   name: "Familia 808",
   all: false,
   dryRun: false,
-  subject: "{{name}}, última oportunidad: Tenis conmemorativos 808 Fest x CIRKUS",
+  subject: "🔥 {{name}}, última oportunidad: Tenis Oficiales 808 Fest x CIRKUS 🔥",
   shopUrl: SHOP_URL,
   delayMs: 350,
 };
@@ -78,7 +78,7 @@ for (let i = 0; i < args.length; i++) {
 function showHelp() {
   console.log(`
 ======================================================================
-  808 FEST x CIRKUS - COMUNICADO POST-EVENTO & EDICIÓN CONMEMORATIVA
+  808 FEST x CIRKUS - LANZAMIENTO SNEAKERS EDICIÓN CONMEMORATIVA
 ======================================================================
 
 USO:
@@ -88,9 +88,10 @@ OPCIONES:
   --to <email>            Enviar correo de prueba a un destinatario específico.
                           Ej: node scripts/send-cirkus-email.js --to alejandrorc2717@gmail.com
   --name <nombre>         Nombre del destinatario (opcional).
-  --all                   Enviar a toda la base de datos de D1.
+  --all                   Enviar masivamente a toda la base de datos D1.
   --dry-run               Simular sin realizar envíos reales.
   --subject <asunto>      Asunto personalizado del correo.
+  --shop-url <url>        Enlace de compra en CIRKUS.
   --delay <ms>            Pausa entre correos en modo masivo (default: 350ms).
 `);
 }
@@ -112,7 +113,7 @@ function findNameByEmail(email) {
   return null;
 }
 
-// Versión en texto plano directa, personal y post-evento
+// Versión en texto plano para respaldo
 function generateCirkusPlainText({ fullName, shopUrl }) {
   const name = fullName || "Amigo/a de 808";
   const purchaseUrl = shopUrl || SHOP_URL;
@@ -121,23 +122,27 @@ Hola ${name},
 
 Queríamos agradecerte por haber hecho parte de esta edición de 808 Fest.
 
-Para conmemorar lo que vivimos juntos, nos unimos con el equipo de CIRKUS para crear una pieza de colección conmemorativa: los tenis oficiales 808 Fest x CIRKUS.
+Para conmemorar lo que vivimos juntos en el festival, nos unimos con el equipo de CIRKUS para crear una pieza de colección conmemorativa: los tenis oficiales 808 Fest x CIRKUS.
 
-Esta es la última oportunidad para obtener tu par de colección oficial antes del cierre de órdenes:
+Esta es la última oportunidad para obtener tu par de colección oficial antes del cierre de pedidos:
 ${purchaseUrl}
 
-Si tienes cualquier duda con las tallas o los envíos, responde directamente a este correo y te ayudamos de inmediato.
+Detalles clave:
+- Colaboración Oficial 808 Fest x CIRKUS
+- Edición Conmemorativa de Colección
+- Envíos a todo el país
 
-Un abrazo,
+Obtén los tuyos aquí:
+${purchaseUrl}
+
+Un saludo,
 Equipo 808 Fest & CIRKUS
-
-P.D. Agrega tickets@el808fest.com a tus contactos para recibir toda la información y fotos oficiales del evento.
   `.trim();
 }
 
-// Plantilla HTML limpia, estilo mensaje directo
+// Plantilla HTML premium (Diseño original oscuro con acentos neon y 1 imagen completa)
 function generateCirkusHtmlTemplate({ fullName, shopUrl }) {
-  const safeName = (fullName || "Amigo/a de 808")
+  const safeName = (fullName || "Familia 808")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
@@ -150,64 +155,127 @@ function generateCirkusHtmlTemplate({ fullName, shopUrl }) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>808 Fest x CIRKUS</title>
+  <title>DROP OFICIAL: 808 Fest x CIRKUS</title>
 </head>
-<body style="margin: 0; padding: 20px 10px; background-color: #0d0d0d; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #E5E5E5; line-height: 1.6;">
-  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 580px; margin: 0 auto; background-color: #121212; border: 1px solid #262626; border-radius: 12px; overflow: hidden; padding: 28px 24px;">
+<body style="margin: 0; padding: 0; background-color: #030303; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #FFFFFF; -webkit-font-smoothing: antialiased;">
+  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #030303; min-height: 100vh; padding: 25px 10px;">
     <tr>
-      <td>
-        <!-- Encabezado simple -->
-        <p style="margin: 0 0 16px 0; font-size: 15px; color: #FFFFFF; font-weight: 600;">
-          Hola ${safeName},
-        </p>
+      <td align="center">
+        <!-- Contenedor Principal -->
+        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #0a0a0a; border: 1px solid #1f1f1f; border-radius: 18px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.95);">
+          
+          <!-- Encabezado Neon Colaboración -->
+          <tr>
+            <td style="padding: 38px 25px 26px 25px; text-align: center; background: radial-gradient(circle at center, #1b3d14 0%, #0a0a0a 85%); border-bottom: 1px solid #1a2a17;">
+              <div style="display: inline-block; background-color: rgba(57, 255, 20, 0.12); border: 1px solid #39FF14; border-radius: 30px; padding: 6px 18px; margin-bottom: 14px;">
+                <span style="font-size: 11px; font-weight: 800; letter-spacing: 2px; color: #39FF14; text-transform: uppercase;">
+                  🔥 DROP EXCLUSIVO • ÚLTIMA OPORTUNIDAD 🔥
+                </span>
+              </div>
+              <h1 style="margin: 0; font-size: 34px; font-weight: 900; letter-spacing: 3px; color: #FFFFFF; text-transform: uppercase;">
+                808 FEST <span style="color: #39FF14;">✕</span> CIRKUS
+              </h1>
+              <p style="margin: 10px 0 0 0; font-size: 13px; letter-spacing: 2.5px; color: #a0a0a0; text-transform: uppercase;">
+                Sneakers Oficiales del Evento
+              </p>
+            </td>
+          </tr>
 
-        <p style="margin: 0 0 16px 0; font-size: 15px; color: #CCCCCC;">
-          Queríamos agradecerte por haber hecho parte de esta edición de <strong>808 Fest</strong>.
-        </p>
+          <!-- Mensaje Introductorio -->
+          <tr>
+            <td style="padding: 32px 30px 20px 30px; text-align: left;">
+              <p style="margin: 0 0 10px 0; font-size: 14px; color: #39FF14; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">
+                ¡HOLA, ${safeName.toUpperCase()}!
+              </p>
+              <h2 style="margin: 0 0 16px 0; font-size: 24px; font-weight: 900; color: #FFFFFF; line-height: 1.3; letter-spacing: 0.5px;">
+                TENIS CONMEMORATIVOS 808 FEST x CIRKUS
+              </h2>
+              <p style="margin: 0 0 18px 0; font-size: 15px; line-height: 1.65; color: #CCCCCC;">
+                Queríamos agradecerte por haber hecho parte de esta edición de <strong>808 Fest</strong>. Para conmemorar lo que vivimos juntos en el festival, nos unimos con el equipo de <strong style="color: #FFFFFF;">CIRKUS</strong> para crear una pieza de colección conmemorativa: los tenis oficiales del festival.
+              </p>
+              <p style="margin: 0 0 25px 0; font-size: 14px; line-height: 1.6; color: #999999;">
+                Esta es tu <strong style="color: #39FF14;">última oportunidad</strong> para ordenar tu par de colección. Diseñados con materiales de alta calidad, silueta urbana y toda la identidad del festival.
+              </p>
+            </td>
+          </tr>
 
-        <p style="margin: 0 0 16px 0; font-size: 15px; color: #CCCCCC;">
-          Para conmemorar lo que vivimos juntos en el festival, nos unimos con el equipo de <strong>CIRKUS</strong> para crear la pieza de colección oficial: los tenis conmemorativos del evento.
-        </p>
+          <!-- ============================================== -->
+          <!-- IMAGEN ÚNICA INTEGRADA EN ALTA RESOLUCIÓN       -->
+          <!-- ============================================== -->
+          <tr>
+            <td align="center" style="padding: 0 25px 22px 25px;">
+              <a href="${purchaseUrl}" target="_blank" style="display: block; text-decoration: none;">
+                <img 
+                  src="${SINGLE_IMAGE_URL}" 
+                  alt="Tenis Oficiales 808 Fest x CIRKUS" 
+                  width="550" 
+                  style="width: 100%; max-width: 550px; height: auto; border-radius: 14px; display: block; border: 1px solid #232d20; box-shadow: 0 10px 30px rgba(0,0,0,0.7);" 
+                />
+              </a>
+            </td>
+          </tr>
 
-        <p style="margin: 0 0 20px 0; font-size: 15px; color: #CCCCCC;">
-          Esta es la <strong style="color: #39FF14;">última oportunidad</strong> para obtener tu par oficial:
-        </p>
+          <!-- SECCIÓN DE COMPRA / BOTÓN CTA Y BENEFICIOS -->
+          <tr>
+            <td style="padding: 10px 30px 35px 30px; text-align: center;">
+              
+              <!-- Tarjeta de Beneficios -->
+              <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%" style="background-color: #121512; border: 1px solid #253322; border-radius: 12px; margin: 10px 0 28px 0; padding: 18px 20px; text-align: left;">
+                <tr>
+                  <td>
+                    <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+                      <tr>
+                        <td style="padding-bottom: 10px;">
+                          <span style="font-size: 16px;">🔥</span>
+                          <strong style="color: #FFFFFF; font-size: 14px; margin-left: 8px;">Colaboración Oficial 808 Fest x CIRKUS</strong>
+                          <p style="margin: 3px 0 0 28px; font-size: 12px; color: #888888;">Edición conmemorativa de colección del festival.</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding-bottom: 10px;">
+                          <span style="font-size: 16px;">⏳</span>
+                          <strong style="color: #FFFFFF; font-size: 14px; margin-left: 8px;">Última Oportunidad</strong>
+                          <p style="margin: 3px 0 0 28px; font-size: 12px; color: #888888;">Ordena tu par antes del cierre definitivo de pedidos.</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <span style="font-size: 16px;">📦</span>
+                          <strong style="color: #FFFFFF; font-size: 14px; margin-left: 8px;">Envíos a todo Colombia</strong>
+                          <p style="margin: 3px 0 0 28px; font-size: 12px; color: #888888;">Compra segura directamente en la tienda oficial.</p>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
 
-        <!-- ÚNICA IMAGEN INTEGRADA -->
-        <div style="margin: 20px 0; text-align: center;">
-          <a href="${purchaseUrl}" target="_blank" style="display: block; text-decoration: none;">
-            <img 
-              src="${SINGLE_IMAGE_URL}" 
-              alt="Tenis Conmemorativos 808 Fest x CIRKUS" 
-              width="530" 
-              style="width: 100%; max-width: 530px; height: auto; border-radius: 8px; display: block; border: 1px solid #2a2a2a;" 
-            />
-          </a>
-        </div>
+              <!-- BOTÓN CTA PRINCIPAL NEON -->
+              <div style="margin: 25px 0 15px 0;">
+                <a href="${purchaseUrl}" target="_blank" style="background-color: #39FF14; color: #000000; font-size: 16px; font-weight: 900; text-decoration: none; padding: 18px 38px; border-radius: 50px; display: inline-block; letter-spacing: 1.5px; text-transform: uppercase; box-shadow: 0 4px 25px rgba(57, 255, 20, 0.45);">
+                  🔥 OBTENER TENIS EN CIRKUS →
+                </a>
+              </div>
+              <p style="margin: 10px 0 0 0; font-size: 12px; color: #777777;">
+                Haz clic para elegir tu talla y hacer tu pedido en CIRKUS
+              </p>
 
-        <!-- Botón / Enlace Principal Directo -->
-        <div style="margin: 26px 0 22px 0; text-align: center;">
-          <a href="${purchaseUrl}" target="_blank" style="background-color: #39FF14; color: #000000; font-size: 15px; font-weight: 800; text-decoration: none; padding: 14px 32px; border-radius: 6px; display: inline-block; letter-spacing: 0.5px;">
-            Ver y obtener la edición en CIRKUS →
-          </a>
-        </div>
+            </td>
+          </tr>
 
-        <!-- Llamado a responder (Interacción para reputación en Gmail) -->
-        <div style="margin: 24px 0 16px 0; padding: 14px 16px; background-color: #171717; border-left: 3px solid #39FF14; border-radius: 4px;">
-          <p style="margin: 0; font-size: 13px; color: #BBBBBB;">
-            💬 <strong>¿Tienes alguna duda con las tallas o el envío?</strong> Simplemente responde a este correo y te ayudamos directamente.
-          </p>
-        </div>
+          <!-- Footer -->
+          <tr>
+            <td style="padding: 24px 25px; text-align: center; background-color: #060606; border-top: 1px solid #161616;">
+              <p style="margin: 0 0 6px 0; font-size: 12px; color: #777777; font-weight: 600;">
+                © 2026 808 Fest ✕ CIRKUS • Medellín, Colombia
+              </p>
+              <p style="margin: 0; font-size: 11px; color: #444444;">
+                Has recibido este correo como parte de la comunidad de 808 Fest.
+              </p>
+            </td>
+          </tr>
 
-        <p style="margin: 20px 0 6px 0; font-size: 14px; color: #FFFFFF;">
-          Un abrazo,<br/>
-          <strong>Equipo 808 Fest &amp; CIRKUS</strong>
-        </p>
-
-        <!-- Consejo de contacto -->
-        <p style="margin: 18px 0 0 0; font-size: 11px; color: #666666; border-top: 1px solid #222222; padding-top: 12px;">
-          💡 <em>Tip: Agrega tickets@el808fest.com a tus contactos para recibir futuras novedades y contenido exclusivo del festival.</em>
-        </p>
+        </table>
       </td>
     </tr>
   </table>
@@ -264,10 +332,10 @@ async function main() {
 
     const subject = args.includes("--subject")
       ? options.subject.replace(/\{\{name\}\}/g, firstName)
-      : `${firstName}, última oportunidad: Tenis conmemorativos 808 Fest x CIRKUS`;
+      : `🔥 ${firstName}, última oportunidad: Tenis Oficiales 808 Fest x CIRKUS 🔥`;
 
     console.log(`\n======================================================`);
-    console.log(`🧪 ENVIANDO CORREO CONMEMORATIVO A: ${options.to}`);
+    console.log(`🧪 ENVIANDO CORREO DISEÑO PREMIUM SNEAKERS A: ${options.to}`);
     console.log(`======================================================`);
     console.log(`- Destinatario : ${targetName} <${options.to}>`);
     console.log(`- Remitente    : ${defaultSender}`);
@@ -318,7 +386,7 @@ async function main() {
   // MODO 2: Envío masivo
   if (options.all) {
     console.log(`\n======================================================`);
-    console.log(`📢 MODO MASIVO: COMUNICADO CIRKUS ALTA ENTREGABILIDAD`);
+    console.log(`📢 MODO MASIVO: PROMOCIÓN SNEAKERS 808 FEST x CIRKUS`);
     console.log(`======================================================`);
 
     let recipients = [];
@@ -356,7 +424,7 @@ async function main() {
 
       const subject = args.includes("--subject")
         ? options.subject.replace(/\{\{name\}\}/g, firstName)
-        : `${firstName}, última oportunidad: Tenis conmemorativos 808 Fest x CIRKUS`;
+        : `🔥 ${firstName}, última oportunidad: Tenis Oficiales 808 Fest x CIRKUS 🔥`;
 
       const htmlContent = generateCirkusHtmlTemplate({
         fullName: name,
