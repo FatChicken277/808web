@@ -39,7 +39,7 @@ loadEnv();
 const apiKey = process.env.RESEND_API_KEY;
 const defaultSender = process.env.SENDER_EMAIL || "808 Fest <tickets@el808fest.com>";
 const SHOP_URL = "https://thecirkus.shop/products/lks-808-fest-edition?variant=45240497963051";
-const SINGLE_IMAGE_URL = "https://www.el808fest.com/images/cirkus/edicion-oficial.jpg";
+const SINGLE_IMAGE_URL = "https://www.el808fest.com/images/cirkus/edicion-cirkus.jpg";
 
 // Parsear argumentos de la línea de comandos
 const args = process.argv.slice(2);
@@ -48,7 +48,7 @@ const options = {
   name: "Familia 808",
   all: false,
   dryRun: false,
-  subject: "{{name}}, última oportunidad antes de 808 Fest (Tenis CIRKUS)",
+  subject: "{{name}}, última oportunidad: Tenis conmemorativos 808 Fest x CIRKUS",
   shopUrl: SHOP_URL,
   delayMs: 350,
 };
@@ -78,7 +78,7 @@ for (let i = 0; i < args.length; i++) {
 function showHelp() {
   console.log(`
 ======================================================================
-  808 FEST x CIRKUS - COMUNICADO PERSONAL & EDICIÓN ESPECIAL
+  808 FEST x CIRKUS - COMUNICADO POST-EVENTO & EDICIÓN CONMEMORATIVA
 ======================================================================
 
 USO:
@@ -112,30 +112,30 @@ function findNameByEmail(email) {
   return null;
 }
 
-// Versión en texto plano directa, personal y conversacional
+// Versión en texto plano directa, personal y post-evento
 function generateCirkusPlainText({ fullName, shopUrl }) {
   const name = fullName || "Amigo/a de 808";
   const purchaseUrl = shopUrl || SHOP_URL;
   return `
 Hola ${name},
 
-Te escribo directamente desde la organización del 808 Fest porque queríamos compartirte algo especial antes de vernos en el evento.
+Queríamos agradecerte por haber hecho parte de esta edición de 808 Fest.
 
-Junto al equipo de CIRKUS diseñamos una edición conmemorativa de tenis oficiales del festival. Esta es la última oportunidad para obtener tu par antes del evento.
+Para conmemorar lo que vivimos juntos, nos unimos con el equipo de CIRKUS para crear una pieza de colección conmemorativa: los tenis oficiales 808 Fest x CIRKUS.
 
-Puedes ver la edición completa y elegir tu talla aquí:
+Esta es la última oportunidad para obtener tu par de colección oficial antes del cierre de órdenes:
 ${purchaseUrl}
 
-Si tienes cualquier duda con las tallas o sobre el evento este fin de semana, responde directamente a este correo y con gusto te ayudamos.
+Si tienes cualquier duda con las tallas o los envíos, responde directamente a este correo y te ayudamos de inmediato.
 
-Un saludo,
-El equipo de 808 Fest & CIRKUS
+Un abrazo,
+Equipo 808 Fest & CIRKUS
 
-P.D. Agrega tickets@el808fest.com a tus contactos para asegurarte de recibir todas las actualizaciones importantes de tu entrada.
+P.D. Agrega tickets@el808fest.com a tus contactos para recibir toda la información y fotos oficiales del evento.
   `.trim();
 }
 
-// Plantilla HTML limpia, estilo mensaje directo (sin aspecto publicitario masivo)
+// Plantilla HTML limpia, estilo mensaje directo
 function generateCirkusHtmlTemplate({ fullName, shopUrl }) {
   const safeName = (fullName || "Amigo/a de 808")
     .replace(/&/g, "&amp;")
@@ -162,11 +162,15 @@ function generateCirkusHtmlTemplate({ fullName, shopUrl }) {
         </p>
 
         <p style="margin: 0 0 16px 0; font-size: 15px; color: #CCCCCC;">
-          Te escribimos directamente desde el equipo de <strong>808 Fest</strong>. Antes de vernos en el festival, queríamos contarte que preparamos una colaboración conmemorativa junto a <strong>CIRKUS</strong> para crear los tenis oficiales de esta edición.
+          Queríamos agradecerte por haber hecho parte de esta edición de <strong>808 Fest</strong>.
+        </p>
+
+        <p style="margin: 0 0 16px 0; font-size: 15px; color: #CCCCCC;">
+          Para conmemorar lo que vivimos juntos en el festival, nos unimos con el equipo de <strong>CIRKUS</strong> para crear la pieza de colección oficial: los tenis conmemorativos del evento.
         </p>
 
         <p style="margin: 0 0 20px 0; font-size: 15px; color: #CCCCCC;">
-          Esta es la <strong style="color: #39FF14;">última oportunidad</strong> para obtener tu par antes del evento:
+          Esta es la <strong style="color: #39FF14;">última oportunidad</strong> para obtener tu par oficial:
         </p>
 
         <!-- ÚNICA IMAGEN INTEGRADA -->
@@ -174,7 +178,7 @@ function generateCirkusHtmlTemplate({ fullName, shopUrl }) {
           <a href="${purchaseUrl}" target="_blank" style="display: block; text-decoration: none;">
             <img 
               src="${SINGLE_IMAGE_URL}" 
-              alt="Edición Oficial 808 Fest x CIRKUS" 
+              alt="Tenis Conmemorativos 808 Fest x CIRKUS" 
               width="530" 
               style="width: 100%; max-width: 530px; height: auto; border-radius: 8px; display: block; border: 1px solid #2a2a2a;" 
             />
@@ -191,18 +195,18 @@ function generateCirkusHtmlTemplate({ fullName, shopUrl }) {
         <!-- Llamado a responder (Interacción para reputación en Gmail) -->
         <div style="margin: 24px 0 16px 0; padding: 14px 16px; background-color: #171717; border-left: 3px solid #39FF14; border-radius: 4px;">
           <p style="margin: 0; font-size: 13px; color: #BBBBBB;">
-            💬 <strong>¿Tienes alguna duda con las tallas o el evento?</strong> Simplemente responde a este correo y te ayudamos directamente.
+            💬 <strong>¿Tienes alguna duda con las tallas o el envío?</strong> Simplemente responde a este correo y te ayudamos directamente.
           </p>
         </div>
 
         <p style="margin: 20px 0 6px 0; font-size: 14px; color: #FFFFFF;">
-          Un saludo,<br/>
+          Un abrazo,<br/>
           <strong>Equipo 808 Fest &amp; CIRKUS</strong>
         </p>
 
         <!-- Consejo de contacto -->
         <p style="margin: 18px 0 0 0; font-size: 11px; color: #666666; border-top: 1px solid #222222; padding-top: 12px;">
-          💡 <em>Tip: Agrega tickets@el808fest.com a tus contactos para no perderte ningún anuncio importante sobre el acceso al festival.</em>
+          💡 <em>Tip: Agrega tickets@el808fest.com a tus contactos para recibir futuras novedades y contenido exclusivo del festival.</em>
         </p>
       </td>
     </tr>
@@ -260,10 +264,10 @@ async function main() {
 
     const subject = args.includes("--subject")
       ? options.subject.replace(/\{\{name\}\}/g, firstName)
-      : `${firstName}, última oportunidad antes de 808 Fest (Tenis CIRKUS)`;
+      : `${firstName}, última oportunidad: Tenis conmemorativos 808 Fest x CIRKUS`;
 
     console.log(`\n======================================================`);
-    console.log(`🧪 ENVIANDO CORREO DE ALTA ENTREGABILIDAD A: ${options.to}`);
+    console.log(`🧪 ENVIANDO CORREO CONMEMORATIVO A: ${options.to}`);
     console.log(`======================================================`);
     console.log(`- Destinatario : ${targetName} <${options.to}>`);
     console.log(`- Remitente    : ${defaultSender}`);
@@ -352,7 +356,7 @@ async function main() {
 
       const subject = args.includes("--subject")
         ? options.subject.replace(/\{\{name\}\}/g, firstName)
-        : `${firstName}, última oportunidad antes de 808 Fest (Tenis CIRKUS)`;
+        : `${firstName}, última oportunidad: Tenis conmemorativos 808 Fest x CIRKUS`;
 
       const htmlContent = generateCirkusHtmlTemplate({
         fullName: name,
