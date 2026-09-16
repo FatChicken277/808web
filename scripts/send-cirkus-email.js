@@ -98,9 +98,55 @@ OPCIONES:
 `);
 }
 
-// Generador de la plantilla HTML con URLs públicas directas para renderizado óptimo en Gmail
+// Buscar nombre en la base de datos D1 si no se proporciona
+function findNameByEmail(email) {
+  try {
+    const query = `SELECT full_name FROM tickets WHERE LOWER(TRIM(email)) = '${email.trim().toLowerCase()}' LIMIT 1;`;
+    const cmd = `npx wrangler d1 execute 808web-db --remote --json --command="${query}"`;
+    const output = execSync(cmd, { encoding: "utf-8" });
+    const parsed = JSON.parse(output);
+    const results = parsed[0]?.results || [];
+    if (results.length > 0 && results[0].full_name) {
+      return results[0].full_name;
+    }
+  } catch (e) {
+    // Ignorar si falla wrangler
+  }
+  return null;
+}
+
+// Generador de versión en texto plano para maximizar entrada a bandeja Principal
+function generateCirkusPlainText({ fullName, shopUrl }) {
+  const name = fullName || "Amigo/a de 808";
+  const purchaseUrl = shopUrl || SHOP_URL;
+  return `
+Hola ${name},
+
+Te escribimos este aviso prioritario antes de vernos en el 808 Fest:
+
+Acabamos de liberar de forma oficial la edición limitada de los tenis 808 FEST x CIRKUS. 
+
+Debido a que la producción fue estrictamente limitada, quedan muy pocas unidades disponibles y queremos que los asistentes registrados tengan la prioridad antes de que se agoten por completo.
+
+Puedes ver los detalles y asegurar tu talla directamente en la tienda oficial:
+${purchaseUrl}
+
+Detalles clave:
+- Colaboración Oficial 808 Fest x CIRKUS
+- Stock estrictamente limitado (sin reposición)
+- Envíos a todo el país
+
+Asegura los tuyos ahora:
+${purchaseUrl}
+
+Nos vemos en el festival,
+Equipo 808 Fest & CIRKUS
+  `.trim();
+}
+
+// Generador de la plantilla HTML optimizada para Deliverability y Urgencia
 function generateCirkusHtmlTemplate({ fullName, shopUrl }) {
-  const safeName = (fullName || "Familia 808")
+  const safeName = (fullName || "Amigo/a de 808")
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
@@ -327,19 +373,35 @@ async function main() {
 
   const resend = apiKey ? new Resend(apiKey) : null;
 
-  // MODO 1: Envío de prueba individual (a tu correo)
+  // MODO 1: Envío de prueba individual
   if (options.to) {
+    let targetName = options.name;
+    if (targetName === "Familia 808") {
+      const dbName = findNameByEmail(options.to);
+      if (dbName) targetName = dbName;
+    }
+    const firstName = targetName.split(" ")[0] || "Amigo/a";
+
+    // Asunto urgente y personalizado si no se especificó uno por argumento
+    const subject = args.includes("--subject")
+      ? options.subject
+      : `⚠️ [Aviso Urgente] ${firstName}: Quedan muy pocos pares 808 Fest x CIRKUS`;
+
     console.log(`\n======================================================`);
     console.log(`🧪 ENVIANDO CORREO DE PRUEBA SNEAKERS A: ${options.to}`);
     console.log(`======================================================`);
-    console.log(`- Destinatario : ${options.name} <${options.to}>`);
+    console.log(`- Destinatario : ${targetName} <${options.to}>`);
     console.log(`- Remitente    : ${defaultSender}`);
-    console.log(`- Asunto       : ${options.subject}`);
+    console.log(`- Asunto       : ${subject}`);
     console.log(`- Enlace Tienda: ${options.shopUrl}`);
     console.log(`- Imágenes URL : ${BASE_IMG_URL}/[1..4].jpeg`);
 
     const htmlContent = generateCirkusHtmlTemplate({
-      fullName: options.name,
+      fullName: targetName,
+      shopUrl: options.shopUrl,
+    });
+    const textContent = generateCirkusPlainText({
+      fullName: targetName,
       shopUrl: options.shopUrl,
     });
 
@@ -352,8 +414,10 @@ async function main() {
       console.log("\n⏳ Enviando a través de Resend...");
       const payload = {
         from: defaultSender,
+        reply_to: "tickets@el808fest.com",
         to: options.to,
-        subject: options.subject,
+        subject: subject,
+        text: textContent,
         html: htmlContent,
       };
 
@@ -407,10 +471,19 @@ async function main() {
 
     for (let i = 0; i < recipients.length; i++) {
       const recipient = recipients[i];
-      const name = recipient.full_name || "Familia 808";
+      const name = recipient.full_name || "Amigo/a de 808";
       const email = recipient.email;
+      const firstName = name.split(" ")[0] || "Amigo/a";
+
+      const subject = args.includes("--subject")
+        ? options.subject
+        : `⚠️ [Aviso Urgente] ${firstName}: Quedan muy pocos pares 808 Fest x CIRKUS`;
 
       const htmlContent = generateCirkusHtmlTemplate({
+        fullName: name,
+        shopUrl: options.shopUrl,
+      });
+      const textContent = generateCirkusPlainText({
         fullName: name,
         shopUrl: options.shopUrl,
       });
@@ -426,8 +499,10 @@ async function main() {
         try {
           const payload = {
             from: defaultSender,
+            reply_to: "tickets@el808fest.com",
             to: email,
-            subject: options.subject,
+            subject: subject,
+            text: textContent,
             html: htmlContent,
           };
 
