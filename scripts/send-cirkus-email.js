@@ -39,7 +39,7 @@ loadEnv();
 const apiKey = process.env.RESEND_API_KEY;
 const defaultSender = process.env.SENDER_EMAIL || "808 Fest <tickets@el808fest.com>";
 const SHOP_URL = "https://thecirkus.shop/products/lks-808-fest-edition?variant=45240497963051";
-const SINGLE_IMAGE_URL = "https://www.el808fest.com/images/cirkus/edicion-cirkus.jpg";
+const SINGLE_IMAGE_URL = "https://www.el808fest.com/images/cirkus/edicion-oficial.jpg";
 
 // Parsear argumentos de la línea de comandos
 const args = process.argv.slice(2);
