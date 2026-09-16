@@ -50,7 +50,7 @@ const options = {
   name: "Familia 808",
   all: false,
   dryRun: false,
-  subject: "👟 DROP EXCLUSIVO: Tenis Oficiales 808 Fest x CIRKUS (Edición Limitada)",
+  subject: "🔥 ÚLTIMAS UNIDADES: Tenis Oficiales 808 Fest x CIRKUS — Stock Limitado 🚨",
   shopUrl: SHOP_URL,
   delayMs: 350,
 };
