@@ -12,7 +12,9 @@
     "astro": "astro",
     "email:test": "node scripts/send-marketing-email.js --to alejandrorc2717@gmail.com --name \"Alejandro\"",
     "email:dry-run": "node scripts/send-marketing-email.js --all --dry-run",
-    "email:broadcast": "node scripts/send-marketing-email.js --all"
+    "email:broadcast": "node scripts/send-marketing-email.js --all",
+    "email:cirkus:test": "node scripts/send-cirkus-email.js --to alejandrorc2717@gmail.com --name \"Alejandro\"",
+    "email:cirkus:broadcast": "node scripts/send-cirkus-email.js --all"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.5.4",
